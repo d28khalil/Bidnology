@@ -1831,7 +1831,7 @@ async def shutdown_event():
 if __name__ == "__main__":
     import uvicorn
     import os
-    # Render provides PORT env var, fallback to 8080 for local dev
-    port = int(os.environ.get("PORT", 8080))
+    # Hardcoded to 8080 for Coolify deployment
+    port = 8080
     uvicorn.run(app, host="0.0.0.0", port=port)
 # Force reload
