@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Saved Deals Kanban</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2b6cee",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                        "surface-dark": "#181b21", // Slightly lighter for cards/panels
+                        "border-dark": "#282e39",
+                        "column-bg": "#131820",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #282e39; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3b4354; 
+        }
+        .glass-effect {
+            background: rgba(16, 22, 34, 0.7);
+            backdrop-filter: blur(10px);
+        }
+        .kanban-column {
+            min-width: 320px;
+            max-width: 320px;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display h-screen flex overflow-hidden selection:bg-primary selection:text-white">
+<aside class="w-20 lg:w-64 flex flex-col border-r border-border-dark bg-background-dark shrink-0 transition-all duration-300">
+<div class="h-16 flex items-center justify-center lg:justify-start lg:px-6 border-b border-border-dark">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-3xl">token</span>
+<span class="text-xl font-bold tracking-tight hidden lg:block text-white">Bidnology</span>
+</div>
+</div>
+<nav class="flex-1 overflow-y-auto py-6 px-2 lg:px-4 gap-2 flex flex-col">
+<div class="lg:px-2 pb-2">
+<p class="text-xs font-semibold text-gray-500 uppercase tracking-wider hidden lg:block">Intelligence</p>
+</div>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined">table_chart</span>
+<span class="text-sm font-medium hidden lg:block">Live Feed</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/20 text-primary group" href="#">
+<span class="material-symbols-outlined">view_kanban</span>
+<span class="text-sm font-medium hidden lg:block">Deal Pipeline</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined">smart_toy</span>
+<span class="text-sm font-medium hidden lg:block">AI Watchlist</span>
+<span class="ml-auto w-2 h-2 rounded-full bg-orange-500 hidden lg:block"></span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-sm font-medium hidden lg:block">Analytics</span>
+</a>
+<div class="mt-8 lg:px-2 pb-2">
+<p class="text-xs font-semibold text-gray-500 uppercase tracking-wider hidden lg:block">System</p>
+</div>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined">folder_shared</span>
+<span class="text-sm font-medium hidden lg:block">Documents</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined">settings_applications</span>
+<span class="text-sm font-medium hidden lg:block">Configuration</span>
+</a>
+</nav>
+<div class="p-4 border-t border-border-dark">
+<div class="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 cursor-pointer">
+<div class="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-purple-500 flex items-center justify-center text-xs font-bold text-white">
+                    JD
+                </div>
+<div class="hidden lg:block">
+<p class="text-sm font-medium text-white">John Doe</p>
+<p class="text-xs text-gray-500">Pro Investor</p>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col h-full relative overflow-hidden">
+<header class="h-16 flex items-center justify-between px-6 border-b border-border-dark bg-background-dark/95 backdrop-blur z-20 sticky top-0 shrink-0">
+<div class="flex-1 max-w-xl">
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500 group-focus-within:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="block w-full pl-10 pr-3 py-2 border-none rounded-lg leading-5 bg-surface-dark text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:bg-background-dark sm:text-sm transition-all shadow-inner" placeholder="Search address, APN, or auction ID..." type="text"/>
+<div class="absolute inset-y-0 right-0 pr-2 flex items-center">
+<span class="text-xs text-gray-600 border border-gray-700 rounded px-1.5 py-0.5">CMD+K</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4 ml-4">
+<div class="hidden xl:flex items-center gap-4 text-xs font-mono text-gray-400 mr-4 border-r border-border-dark pr-4">
+<span class="flex items-center gap-1"><span class="text-emerald-500">▲</span> NY: +2.4%</span>
+<span class="flex items-center gap-1"><span class="text-red-500">▼</span> CA: -0.8%</span>
+<span class="flex items-center gap-1 text-primary">● LIVE: 42 Auctions</span>
+</div>
+<button class="relative p-2 text-gray-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[22px]">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-background-dark"></span>
+</button>
+<button class="p-2 text-gray-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[22px]">help</span>
+</button>
+</div>
+</header>
+<div class="flex-1 overflow-hidden flex flex-col p-4 lg:p-8">
+<div class="max-w-[1920px] mx-auto w-full flex flex-col gap-6 h-full">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 shrink-0">
+<div class="bg-surface-dark border border-border-dark rounded-lg p-5 flex flex-col gap-3 relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl text-primary">data_usage</span>
+</div>
+<p class="text-gray-400 text-sm font-medium">Pipeline Value</p>
+<div class="flex items-end gap-3">
+<p class="text-3xl font-bold text-white tracking-tight tabular-nums">$3.2M</p>
+<span class="text-emerald-500 text-sm font-medium mb-1 bg-emerald-500/10 px-1.5 py-0.5 rounded flex items-center">
+<span class="material-symbols-outlined text-sm mr-0.5">trending_up</span> +12%
+                            </span>
+</div>
+<div class="w-full bg-gray-800 h-1 rounded-full mt-2 overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 70%"></div>
+</div>
+</div>
+<div class="bg-surface-dark border border-border-dark rounded-lg p-5 flex flex-col gap-3 relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl text-emerald-500">monetization_on</span>
+</div>
+<p class="text-gray-400 text-sm font-medium">Avg. Equity Spread</p>
+<div class="flex items-end gap-3">
+<p class="text-3xl font-bold text-white tracking-tight tabular-nums">22.4%</p>
+<span class="text-emerald-500 text-sm font-medium mb-1 bg-emerald-500/10 px-1.5 py-0.5 rounded flex items-center">
+<span class="material-symbols-outlined text-sm mr-0.5">trending_up</span> +0.8%
+                            </span>
+</div>
+<div class="w-full bg-gray-800 h-1 rounded-full mt-2 overflow-hidden">
+<div class="bg-emerald-500 h-full rounded-full" style="width: 45%"></div>
+</div>
+</div>
+<div class="bg-surface-dark border border-border-dark rounded-lg p-5 flex flex-col gap-3 relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl text-orange-500">gavel</span>
+</div>
+<p class="text-gray-400 text-sm font-medium">Pending Bids</p>
+<div class="flex items-end gap-3">
+<p class="text-3xl font-bold text-white tracking-tight tabular-nums">8</p>
+<span class="text-orange-400 text-sm font-medium mb-1 bg-orange-500/10 px-1.5 py-0.5 rounded flex items-center">
+<span class="material-symbols-outlined text-sm mr-0.5">timer</span> Closing Soon
+                            </span>
+</div>
+<div class="w-full bg-gray-800 h-1 rounded-full mt-2 overflow-hidden">
+<div class="bg-orange-500 h-full rounded-full" style="width: 35%"></div>
+</div>
+</div>
+</div>
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shrink-0">
+<div class="bg-surface-dark p-1 rounded-lg border border-border-dark inline-flex">
+<button class="px-4 py-1.5 rounded text-sm font-medium text-gray-400 hover:text-white transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">grid_view</span> Data Grid
+                        </button>
+<button class="px-4 py-1.5 rounded text-sm font-medium bg-background-dark text-white shadow-sm ring-1 ring-white/10 transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">view_kanban</span> Kanban
+                        </button>
+<button class="px-4 py-1.5 rounded text-sm font-medium text-gray-400 hover:text-white transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">map</span> Map
+                        </button>
+</div>
+<div class="flex flex-wrap gap-2">
+<button class="px-3 py-1.5 rounded-lg border border-border-dark bg-surface-dark text-sm text-gray-300 hover:border-primary hover:text-primary transition-colors flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px]">filter_list</span> Filters
+                        </button>
+<div class="h-8 w-[1px] bg-border-dark mx-1"></div>
+<button class="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-sm font-medium flex items-center gap-1.5">
+                            High Equity <span class="material-symbols-outlined text-[16px]">close</span>
+</button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-dark text-gray-400 border border-border-dark hover:border-gray-500 text-sm font-medium flex items-center gap-1.5 transition-colors">
+                            Underpriced
+                        </button>
+</div>
+</div>
+<div class="flex-1 overflow-x-auto overflow-y-hidden pb-2 -mx-4 px-4 lg:-mx-8 lg:px-8">
+<div class="flex gap-6 h-full min-w-max">
+<div class="kanban-column flex flex-col h-full">
+<div class="flex items-center justify-between mb-3 px-1">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-blue-500"></span>
+<h3 class="text-sm font-semibold text-gray-200 tracking-wide">Researching</h3>
+<span class="text-[10px] font-bold text-gray-500 bg-surface-dark border border-border-dark px-1.5 py-0.5 rounded">4</span>
+</div>
+<button class="text-gray-500 hover:text-white"><span class="material-symbols-outlined text-lg">add</span></button>
+</div>
+<div class="flex-1 overflow-y-auto pr-2 flex flex-col gap-3 custom-scrollbar">
+<div class="group relative bg-surface-dark border border-border-dark rounded-xl p-3 hover:shadow-lg hover:shadow-black/50 hover:border-primary/40 transition-all cursor-grab active:cursor-grabbing">
+<div class="relative h-28 mb-3 rounded-lg overflow-hidden border border-border-dark/50">
+<div class="absolute inset-0 bg-cover bg-center transition-transform group-hover:scale-105 duration-700" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAR5ezaTNWPYsdE_h-boeQ0WvAWBqRRjMKBG4qdYFWlnOeigYzQyfu4wcZZ5N0_7HLNTGQzncbLPBgOdGCT3WLsP4xjenRg9OG4Y2X7rhdOPtbkuAKLLt0EzWFrZd-70WuTW6C0DNviySiL9ffYvN_nrSJH3aEqE0VejqNF_qg66T1OhBC1-9x3pJFcKLKu5_WxSoMx85v-QgXzptLj5FuRS71yP5xkCZbmgWlsV8jSI628FQ_E0-_2Eq_vBEmrCEdo6PVBTVp3');"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+<div class="absolute bottom-2 left-2 right-2 flex justify-between items-end">
+<div class="flex flex-col">
+<span class="text-[10px] text-gray-400 font-medium">Est. Profit</span>
+<span class="text-emerald-400 font-bold text-sm tracking-tight">+$175k</span>
+</div>
+<div class="bg-primary/20 backdrop-blur-sm px-1.5 py-0.5 rounded text-[10px] text-primary font-bold border border-primary/30 flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">smart_toy</span> 94
+                                            </div>
+</div>
+</div>
+<div class="flex justify-between items-start mb-2">
+<div>
+<h4 class="text-white font-semibold text-sm leading-tight">1240 Willow Creek Ln</h4>
+<p class="text-gray-500 text-xs mt-0.5">Sacramento, CA</p>
+</div>
+<button class="text-gray-600 hover:text-white transition-colors"><span class="material-symbols-outlined text-[18px]">more_horiz</span></button>
+</div>
+<div class="grid grid-cols-2 gap-2 mb-3">
+<div class="bg-background-dark/50 rounded px-2 py-1.5 border border-white/5">
+<p class="text-[9px] text-gray-500 uppercase font-bold">Spread</p>
+<p class="text-xs font-semibold text-emerald-400">+41.6%</p>
+</div>
+<div class="bg-background-dark/50 rounded px-2 py-1.5 border border-white/5">
+<p class="text-[9px] text-gray-500 uppercase font-bold">Auction</p>
+<p class="text-xs font-semibold text-gray-300">Today</p>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-white/5">
+<div class="flex -space-x-1.5">
+<div class="w-5 h-5 rounded-full bg-indigo-500 flex items-center justify-center text-[8px] text-white font-bold ring-2 ring-surface-dark">JD</div>
+</div>
+<span class="text-[10px] text-gray-500 font-mono">ID: #8492A</span>
+</div>
+</div>
+<div class="group relative bg-surface-dark border border-border-dark rounded-xl p-3 hover:shadow-lg hover:shadow-black/50 hover:border-gray-600 transition-all cursor-grab active:cursor-grabbing opacity-70">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h4 class="text-gray-300 font-medium text-sm leading-tight">5501 Broadway</h4>
+<p class="text-gray-600 text-xs mt-0.5">Oakland, CA</p>
+</div>
+</div>
+<div class="h-1.5 w-full bg-gray-800 rounded-full overflow-hidden mb-2">
+<div class="h-full bg-blue-500/50 w-1/3"></div>
+</div>
+<p class="text-[10px] text-blue-400">Processing Data...</p>
+</div>
+</div>
+</div>
+<div class="kanban-column flex flex-col h-full">
+<div class="flex items-center justify-between mb-3 px-1">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-purple-500"></span>
+<h3 class="text-sm font-semibold text-gray-200 tracking-wide">Analyzing</h3>
+<span class="text-[10px] font-bold text-gray-500 bg-surface-dark border border-border-dark px-1.5 py-0.5 rounded">2</span>
+</div>
+<button class="text-gray-500 hover:text-white"><span class="material-symbols-outlined text-lg">add</span></button>
+</div>
+<div class="flex-1 overflow-y-auto pr-2 flex flex-col gap-3 custom-scrollbar">
+<div class="group relative bg-surface-dark border border-border-dark rounded-xl p-3 hover:shadow-lg hover:shadow-black/50 hover:border-purple-500/40 transition-all cursor-grab active:cursor-grabbing">
+<div class="relative h-28 mb-3 rounded-lg overflow-hidden border border-border-dark/50">
+<div class="absolute inset-0 bg-cover bg-center transition-transform group-hover:scale-105 duration-700" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAvQsw05HGTr8tKQaK9I2Yg-iFxVhYZmU4bOlcuezVlTrzcxWuj3NUZ2yeR7cm2jtGozuHovDSkAA94XWDEsOZY_3sWsmSD4q-KR9ixdUvs_HDsRWxelP6Eh6mjGPJmDSsGpfVi0ouxbCQn0Tt4wfBeYlrhGGNzWK-GqPFMNaklCh509jtHfD3lgEwQbUqFk8kPi9DqbLUS1VvM2vHF1NAo3jswsMaLyZNFcNZolCcz6rP3w-08bs_7d6Uqe_caBSfxL7aj5EWR');"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+<div class="absolute top-2 left-2">
+<span class="bg-purple-500/20 text-purple-300 text-[10px] font-bold px-2 py-0.5 rounded border border-purple-500/30 backdrop-blur-md">Deep Dive</span>
+</div>
+<div class="absolute bottom-2 left-2 right-2 flex justify-between items-end">
+<div class="flex flex-col">
+<span class="text-[10px] text-gray-400 font-medium">Opening Bid</span>
+<span class="text-white font-bold text-sm tracking-tight">$580k</span>
+</div>
+<div class="bg-emerald-500/20 backdrop-blur-sm px-1.5 py-0.5 rounded text-[10px] text-emerald-400 font-bold border border-emerald-500/30 flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">bolt</span> 88
+                                            </div>
+</div>
+</div>
+<div class="flex justify-between items-start mb-2">
+<div>
+<h4 class="text-white font-semibold text-sm leading-tight">8502 Ocean View Blvd</h4>
+<p class="text-gray-500 text-xs mt-0.5">San Diego, CA</p>
+</div>
+<button class="text-gray-600 hover:text-white transition-colors"><span class="material-symbols-outlined text-[18px]">more_horiz</span></button>
+</div>
+<div class="grid grid-cols-2 gap-2 mb-3">
+<div class="bg-background-dark/50 rounded px-2 py-1.5 border border-white/5">
+<p class="text-[9px] text-gray-500 uppercase font-bold">ARV</p>
+<p class="text-xs font-semibold text-gray-300">$710k</p>
+</div>
+<div class="bg-background-dark/50 rounded px-2 py-1.5 border border-white/5">
+<p class="text-[9px] text-gray-500 uppercase font-bold">Equity</p>
+<p class="text-xs font-semibold text-emerald-400">22.4%</p>
+</div>
+</div>
+<div class="flex gap-1 flex-wrap">
+<span class="text-[10px] bg-white/5 text-gray-400 px-1.5 py-0.5 rounded border border-white/5">Luxury</span>
+<span class="text-[10px] bg-white/5 text-gray-400 px-1.5 py-0.5 rounded border border-white/5">High Demand</span>
+</div>
+</div>
+</div>
+</div>
+<div class="kanban-column flex flex-col h-full">
+<div class="flex items-center justify-between mb-3 px-1">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-yellow-500"></span>
+<h3 class="text-sm font-semibold text-gray-200 tracking-wide">Due Diligence</h3>
+<span class="text-[10px] font-bold text-gray-500 bg-surface-dark border border-border-dark px-1.5 py-0.5 rounded">1</span>
+</div>
+<button class="text-gray-500 hover:text-white"><span class="material-symbols-outlined text-lg">add</span></button>
+</div>
+<div class="flex-1 overflow-y-auto pr-2 flex flex-col gap-3 custom-scrollbar">
+<div class="group relative bg-surface-dark border border-border-dark rounded-xl p-3 hover:shadow-lg hover:shadow-black/50 hover:border-yellow-500/40 transition-all cursor-grab active:cursor-grabbing">
+<div class="relative h-28 mb-3 rounded-lg overflow-hidden border border-border-dark/50">
+<div class="absolute inset-0 bg-cover bg-center transition-transform group-hover:scale-105 duration-700" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAVM52CyBZKuKXHcqVyiDcUyNLdqFVF4nNRWogdZLs8qtKnLyb-SZrHkSEreaDQc8j0wJJV73-OpTB0fHEOimzlz243O0fY4uPyZELWZ5FK7NwsGfqfpAGBKluI6pI-e_K7ls3klffgERuwkAB-96b5-CFvxV7S123KJS4YBXJdTe5xlS1aCcFVWXQbZcbjNrGhKzYfhR-rmYToUc-5EtmwGLBjwQQi-sq9ztG-AM15hVVKxMDFN3oyOf1Bt-16nJ7DJp1rZYwx');"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+<div class="absolute top-2 right-2">
+<span class="material-symbols-outlined text-yellow-500 bg-black/50 rounded-full p-0.5 text-lg backdrop-blur">warning</span>
+</div>
+<div class="absolute bottom-2 left-2 right-2 flex justify-between items-end">
+<div class="flex flex-col">
+<span class="text-[10px] text-gray-400 font-medium">Spread</span>
+<span class="text-yellow-500 font-bold text-sm tracking-tight">+6.7%</span>
+</div>
+<div class="bg-yellow-500/20 backdrop-blur-sm px-1.5 py-0.5 rounded text-[10px] text-yellow-500 font-bold border border-yellow-500/30 flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">search</span> 65
+                                            </div>
+</div>
+</div>
+<div class="flex justify-between items-start mb-2">
+<div>
+<h4 class="text-white font-semibold text-sm leading-tight">4409 Maplewood Ave</h4>
+<p class="text-gray-500 text-xs mt-0.5">Los Angeles, CA</p>
+</div>
+<button class="text-gray-600 hover:text-white transition-colors"><span class="material-symbols-outlined text-[18px]">more_horiz</span></button>
+</div>
+<div class="bg-yellow-500/5 border border-yellow-500/10 rounded p-2 mb-3">
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-yellow-500 text-sm mt-0.5">info</span>
+<p class="text-[10px] text-gray-400 leading-snug">
+                                                Occupancy status unclear. Preliminary title check reveals potential lien.
+                                            </p>
+</div>
+</div>
+<div class="flex items-center justify-between pt-2 border-t border-white/5">
+<span class="text-[10px] text-red-400 font-medium flex items-center gap-1">
+<span class="w-1.5 h-1.5 bg-red-500 rounded-full"></span> Action Required
+                                        </span>
+<button class="text-[10px] text-white bg-white/10 hover:bg-white/20 px-2 py-1 rounded transition-colors">Review Docs</button>
+</div>
+</div>
+</div>
+</div>
+<div class="kanban-column flex flex-col h-full">
+<div class="flex items-center justify-between mb-3 px-1">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-orange-500"></span>
+<h3 class="text-sm font-semibold text-gray-200 tracking-wide">Bidding</h3>
+<span class="text-[10px] font-bold text-gray-500 bg-surface-dark border border-border-dark px-1.5 py-0.5 rounded">1</span>
+</div>
+<button class="text-gray-500 hover:text-white"><span class="material-symbols-outlined text-lg">add</span></button>
+</div>
+<div class="flex-1 overflow-y-auto pr-2 flex flex-col gap-3 custom-scrollbar">
+<div class="group relative bg-surface-dark border border-border-dark rounded-xl p-3 hover:shadow-lg hover:shadow-black/50 hover:border-orange-500/40 transition-all cursor-grab active:cursor-grabbing ring-1 ring-orange-500/10">
+<div class="relative h-28 mb-3 rounded-lg overflow-hidden border border-border-dark/50">
+<div class="absolute inset-0 bg-cover bg-center transition-transform group-hover:scale-105 duration-700" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDtsNaovPtiNUomCKgIxgGH0Dg0tXdXcFgFxeK62fkaaWGQOrt-4UiiLDJSrimoFtwcMSmn38YLvDX6SEcaBWxULDFmn-ffalC4l58kzUJ-AGOg0F-AKugf00O7DS3xUkb4gR0XqFFcTkVGxsYOlAQxk_Du11s4J3B6Tq87UowQbr8ix1feIzC9PihttFEzCkqxqwtWWtUa6Av_xtKRx424SiLwGRsSaO-0gYr_Oq0gE5kR7c2rUHf5WdR7v3eIxp4XfSktEuG9');"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+<div class="absolute top-2 left-2 right-2 flex justify-between">
+<span class="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm flex items-center gap-1 animate-pulse">
+<span class="material-symbols-outlined text-[10px]">gavel</span> LIVE
+                                             </span>
+</div>
+<div class="absolute bottom-2 left-2 right-2 flex justify-between items-end">
+<div class="flex flex-col">
+<span class="text-[10px] text-gray-400 font-medium">Max Bid Set</span>
+<span class="text-white font-bold text-sm tracking-tight">$360k</span>
+</div>
+<div class="bg-primary/20 backdrop-blur-sm px-1.5 py-0.5 rounded text-[10px] text-primary font-bold border border-primary/30 flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">smart_toy</span> 91
+                                            </div>
+</div>
+</div>
+<div class="flex justify-between items-start mb-2">
+<div>
+<h4 class="text-white font-semibold text-sm leading-tight">772 Pine Ridge Dr</h4>
+<p class="text-gray-500 text-xs mt-0.5">Roseville, CA</p>
+</div>
+<button class="text-gray-600 hover:text-white transition-colors"><span class="material-symbols-outlined text-[18px]">more_horiz</span></button>
+</div>
+<div class="flex items-center gap-2 mb-3 bg-orange-500/10 border border-orange-500/20 p-2 rounded">
+<span class="material-symbols-outlined text-orange-500 text-lg">timer</span>
+<div>
+<p class="text-[10px] text-orange-400 uppercase font-bold">Auction Ends</p>
+<p class="text-xs text-white font-mono">02:14:59</p>
+</div>
+</div>
+<div class="w-full bg-primary hover:bg-primary/90 text-white text-xs font-bold py-2 rounded flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-sm">gavel</span> Place Bid
+                                    </div>
+</div>
+</div>
+</div>
+<div class="kanban-column flex flex-col h-full border-l border-border-dark/50 pl-6 bg-black/10 rounded-r-xl">
+<div class="flex items-center justify-between mb-3 px-1">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+<h3 class="text-sm font-semibold text-gray-200 tracking-wide">Won / Archived</h3>
+</div>
+<button class="text-gray-500 hover:text-white"><span class="material-symbols-outlined text-lg">filter_list</span></button>
+</div>
+<div class="flex-1 overflow-y-auto pr-2 flex flex-col gap-3 custom-scrollbar">
+<div class="group relative bg-surface-dark border border-emerald-500/30 rounded-xl p-3 hover:shadow-lg hover:shadow-emerald-900/10 transition-all cursor-pointer">
+<div class="flex justify-between items-start mb-2">
+<div class="flex gap-3">
+<div class="w-10 h-10 rounded bg-cover bg-center shrink-0 border border-border-dark" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCRyhjaJ6dWrTC79mzNywH2DL9OC7S8jtRJp2XOSlPg5EwFaaGjP2iA7rSzgjK9MK77wwCfNpSQk81IgMAmRoVGPkQ7omJOPSw21DZ2tR3onywACEKIzDWDeaTv1xM5Fl9Yz6zfHGV7W_hChHuEfxJgQsqIOxicaFQV1pGwnlU-UmUDHtOpPmPrN0LYqQb0L5K1t7SFY5pBxc50Hp8tD8zQuSzvGi8yv1NbpkIC5b0rSS4bOOU0k-3F9R7McdsKulPH1dLnxbyM');"></div>
+<div>
+<h4 class="text-white font-semibold text-sm leading-tight">2020 Elm Street</h4>
+<span class="bg-emerald-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-sm inline-block mt-1">WON</span>
+</div>
+</div>
+<div class="text-right">
+<p class="text-[10px] text-gray-400">Final Price</p>
+<p class="text-xs font-bold text-white">$185,000</p>
+</div>
+</div>
+<div class="mt-2 pt-2 border-t border-white/5 flex justify-between items-center">
+<span class="text-[10px] text-gray-500">Oct 27</span>
+<span class="text-[10px] text-emerald-400 font-medium">+56.7% Proj. ROI</span>
+</div>
+</div>
+<div class="group relative bg-surface-dark border border-border-dark rounded-xl p-3 opacity-60 hover:opacity-100 transition-all">
+<div class="flex justify-between items-start mb-2">
+<div class="flex gap-3">
+<div class="w-10 h-10 rounded bg-gray-700 shrink-0 border border-border-dark flex items-center justify-center">
+<span class="material-symbols-outlined text-gray-500">home_work</span>
+</div>
+<div>
+<h4 class="text-gray-300 font-medium text-sm leading-tight line-through">9912 Vista Way</h4>
+<span class="bg-gray-700 text-gray-300 text-[9px] font-bold px-1.5 py-0.5 rounded-sm inline-block mt-1">LOST</span>
+</div>
+</div>
+<div class="text-right">
+<p class="text-[10px] text-gray-500">Sold For</p>
+<p class="text-xs font-medium text-gray-400">$620,000</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+</body></html>

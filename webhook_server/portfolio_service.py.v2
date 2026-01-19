@@ -1,0 +1,296 @@
+"""
+Portfolio Tracking Service
+
+Manages user's acquired properties portfolio.
+Tracks investment performance, ROI, and property lifecycle.
+"""
+
+import os
+import logging
+from typing import Dict, List, Optional, Any
+from datetime import datetime
+from supabase import create_client, Client
+from .feature_toggle_service import FeatureToggleService
+
+logger = logging.getLogger(__name__)
+
+# Portfolio statuses
+PORTFOLIO_STATUSES = [
+    "under_repair",
+    "rented",
+    "for_sale",
+    "under_contract",
+    "sold",
+    "held",
+    "lost"
+]
+
+
+class PortfolioService:
+    """Service for managing acquired property portfolios"""
+
+    def __init__(self):
+        self.supabase: Client = create_client(
+            os.getenv("SUPABASE_URL"),
+            os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+        )
+        self.feature_service = FeatureToggleService()
+
+    async def is_feature_enabled(
+        self,
+        user_id: Optional[str] = None,
+        county_id: Optional[int] = None,
+        state: Optional[str] = None
+    ) -> bool:
+        """Check if portfolio tracking feature is enabled"""
+        return await self.feature_service.is_feature_enabled(
+            "portfolio_tracking",
+            user_id=user_id,
+            county_id=county_id,
+            state=state
+        )
+
+    async def add_to_portfolio(
+        self,
+        user_id: str,
+        property_id: int,
+        acquisition_date: Optional[str] = None,
+        purchase_price: Optional[float] = None,
+        rehab_cost: Optional[float] = None,
+        strategy_used: Optional[str] = None,
+        arv_target: Optional[float] = None
+    ) -> Dict[str, Any]:
+        """Add acquired property to portfolio (or update if already exists)"""
+        if not await self.is_feature_enabled(user_id):
+            raise PermissionError("Portfolio tracking feature not enabled")
+
+        # Check if already in portfolio - if so, update it
+        existing = await self._get_portfolio_entry(user_id, property_id)
+        if existing:
+            # Update existing entry with new values
+            return await self._update_existing_entry(
+                existing["id"], user_id, acquisition_date, purchase_price,
+                rehab_cost, strategy_used, arv_target
+            )
+
+        total_investment = (purchase_price or 0) + (rehab_cost or 0)
+
+        entry_data = {
+            "user_id": user_id,
+            "property_id": property_id,
+            "acquisition_date": acquisition_date or datetime.utcnow().isoformat(),
+            "purchase_price": purchase_price,
+            "rehab_cost": rehab_cost,
+            "total_investment": total_investment,
+            "strategy_used": strategy_used,
+            "arv_target": arv_target,
+            "portfolio_status": "under_repair",
+            "added_to_portfolio_at": datetime.utcnow().isoformat(),
+            "updated_at": datetime.utcnow().isoformat()
+        }
+
+        result = self.supabase.table("v2_user_portfolio").insert(
+            entry_data
+        ).execute()
+
+        if not result.data:
+            raise Exception("Failed to add to portfolio")
+
+        logger.info(f"Added property {property_id} to portfolio for user {user_id}")
+        return result.data[0]
+
+    async def _update_existing_entry(
+        self,
+        entry_id: int,
+        user_id: str,
+        acquisition_date: Optional[str] = None,
+        purchase_price: Optional[float] = None,
+        rehab_cost: Optional[float] = None,
+        strategy_used: Optional[str] = None,
+        arv_target: Optional[float] = None
+    ) -> Dict[str, Any]:
+        """Update an existing portfolio entry"""
+        updates = {}
+        if acquisition_date:
+            updates["acquisition_date"] = acquisition_date
+        if purchase_price is not None:
+            updates["purchase_price"] = purchase_price
+        if rehab_cost is not None:
+            updates["rehab_cost"] = rehab_cost
+        if strategy_used:
+            updates["strategy_used"] = strategy_used
+        if arv_target is not None:
+            updates["arv_target"] = arv_target
+
+        # Recalculate total investment
+        if purchase_price is not None or rehab_cost is not None:
+            existing = await self.get_portfolio_entry(entry_id, user_id)
+            updates["total_investment"] = (
+                (purchase_price if purchase_price is not None else existing.get("purchase_price", 0)) +
+                (rehab_cost if rehab_cost is not None else existing.get("rehab_cost", 0))
+            )
+
+        updates["updated_at"] = datetime.utcnow().isoformat()
+
+        result = self.supabase.table("v2_user_portfolio").update(
+            updates
+        ).eq("id", entry_id).execute()
+
+        if not result.data:
+            raise Exception("Failed to update portfolio entry")
+
+        return result.data[0]
+
+    async def get_portfolio(
+        self,
+        user_id: str,
+        status: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
+        """Get user's portfolio with property details"""
+        query = self.supabase.table("v2_user_portfolio").select(
+            "*, foreclosure_listings(*)"
+        ).eq("user_id", user_id).order("added_to_portfolio_at", desc=True)
+
+        if status:
+            query = query.eq("portfolio_status", status)
+
+        result = query.execute()
+        return result.data if result.data else []
+
+    async def get_portfolio_entry(
+        self,
+        entry_id: int,
+        user_id: str
+    ) -> Optional[Dict[str, Any]]:
+        """Get specific portfolio entry"""
+        result = self.supabase.table("v2_user_portfolio").select(
+            "*, foreclosure_listings(*)"
+        ).eq("id", entry_id).eq("user_id", user_id).execute()
+
+        return result.data[0] if result.data else None
+
+    async def update_portfolio_entry(
+        self,
+        entry_id: int,
+        user_id: str,
+        current_value: Optional[float] = None,
+        actual_arv: Optional[float] = None,
+        portfolio_status: Optional[str] = None,
+        sale_date: Optional[str] = None,
+        sale_price: Optional[float] = None
+    ) -> Dict[str, Any]:
+        """Update portfolio entry"""
+        # Validate entry exists and belongs to user
+        existing = await self.get_portfolio_entry(entry_id, user_id)
+        if not existing:
+            raise ValueError(f"Portfolio entry {entry_id} not found")
+
+        updates = {}
+
+        if current_value is not None:
+            updates["current_value"] = current_value
+
+        if actual_arv is not None:
+            updates["actual_arv"] = actual_arv
+
+        if portfolio_status:
+            if portfolio_status not in PORTFOLIO_STATUSES:
+                raise ValueError(f"Invalid status: {portfolio_status}")
+            updates["portfolio_status"] = portfolio_status
+
+        if sale_date:
+            updates["sale_date"] = sale_date
+
+        if sale_price:
+            updates["sale_price"] = sale_price
+            # Calculate actual ROI
+            total_invested = existing.get("total_investment", 0)
+            profit = sale_price - total_invested
+            updates["actual_roi"] = round((profit / total_invested * 100), 2) if total_invested > 0 else 0
+
+        updates["updated_at"] = datetime.utcnow().isoformat()
+
+        # Calculate ROI percent if current_value available
+        if current_value and existing.get("total_investment"):
+            updates["roi_percent"] = round(
+                ((current_value - existing["total_investment"]) / existing["total_investment"] * 100),
+                2
+            )
+
+        result = self.supabase.table("v2_user_portfolio").update(
+            updates
+        ).eq("id", entry_id).eq("user_id", user_id).execute()
+
+        if not result.data:
+            raise Exception("Failed to update portfolio entry")
+
+        logger.info(f"Updated portfolio entry {entry_id}")
+        return result.data[0]
+
+    async def remove_from_portfolio(
+        self,
+        entry_id: int,
+        user_id: str
+    ) -> bool:
+        """Remove property from portfolio"""
+        result = self.supabase.table("v2_user_portfolio").delete().eq(
+            "id", entry_id
+        ).eq("user_id", user_id).execute()
+
+        deleted = len(result.data) > 0 if result.data else False
+
+        if deleted:
+            logger.info(f"Removed portfolio entry {entry_id} for user {user_id}")
+
+        return deleted
+
+    async def get_portfolio_summary(
+        self,
+        user_id: str
+    ) -> Dict[str, Any]:
+        """Get portfolio summary statistics"""
+        entries = await self.get_portfolio(user_id)
+
+        total_invested = sum(e.get("total_investment", 0) or 0 for e in entries)
+        current_value = sum(e.get("current_value", 0) or 0 for e in entries)
+        total_arv_target = sum(e.get("arv_target", 0) or 0 for e in entries)
+        actual_profit = sum(
+            (e.get("sale_price", 0) or 0) - (e.get("total_investment", 0) or 0)
+            for e in entries
+            if e.get("portfolio_status") == "sold"
+        )
+
+        # Count by status
+        status_counts = {}
+        for entry in entries:
+            status = entry.get("portfolio_status", "unknown")
+            status_counts[status] = status_counts.get(status, 0) + 1
+
+        # Calculate overall ROI
+        overall_roi = 0
+        if total_invested > 0:
+            if current_value > 0:
+                overall_roi = ((current_value - total_invested) / total_invested) * 100
+
+        return {
+            "total_properties": len(entries),
+            "total_invested": round(total_invested, 2),
+            "current_value": round(current_value, 2),
+            "total_arv_target": round(total_arv_target, 2),
+            "potential_profit": round(current_value - total_invested, 2),
+            "actual_profit": round(actual_profit, 2),
+            "overall_roi_percent": round(overall_roi, 2),
+            "status_breakdown": status_counts
+        }
+
+    async def _get_portfolio_entry(
+        self,
+        user_id: str,
+        property_id: int
+    ) -> Optional[Dict[str, Any]]:
+        """Get portfolio entry by user and property"""
+        result = self.supabase.table("v2_user_portfolio").select(
+            "*"
+        ).eq("user_id", user_id).eq("property_id", property_id).execute()
+
+        return result.data[0] if result.data else None

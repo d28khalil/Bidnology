@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Bidnology Dashboard</title>
+<!-- Google Fonts: Manrope -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2b6cee",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                        "surface-dark": "#181b21", // Slightly lighter for cards/panels
+                        "border-dark": "#282e39",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for "Elite" feel */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #101622; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #282e39; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3b4354; 
+        }
+        .glass-effect {
+            background: rgba(16, 22, 34, 0.7);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display h-screen flex overflow-hidden selection:bg-primary selection:text-white">
+<!-- Side Navigation -->
+<aside class="w-20 lg:w-64 flex flex-col border-r border-border-dark bg-background-dark shrink-0 transition-all duration-300">
+<div class="h-16 flex items-center justify-center lg:justify-start lg:px-6 border-b border-border-dark">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-3xl">token</span>
+<span class="text-xl font-bold tracking-tight hidden lg:block text-white">Bidnology</span>
+</div>
+</div>
+<nav class="flex-1 overflow-y-auto py-6 px-2 lg:px-4 gap-2 flex flex-col">
+<div class="lg:px-2 pb-2">
+<p class="text-xs font-semibold text-gray-500 uppercase tracking-wider hidden lg:block">Intelligence</p>
+</div>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/20 text-primary group" href="#">
+<span class="material-symbols-outlined">table_chart</span>
+<span class="text-sm font-medium hidden lg:block">Live Feed</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined">view_kanban</span>
+<span class="text-sm font-medium hidden lg:block">Deal Pipeline</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined">smart_toy</span>
+<span class="text-sm font-medium hidden lg:block">AI Watchlist</span>
+<span class="ml-auto w-2 h-2 rounded-full bg-orange-500 hidden lg:block"></span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-sm font-medium hidden lg:block">Analytics</span>
+</a>
+<div class="mt-8 lg:px-2 pb-2">
+<p class="text-xs font-semibold text-gray-500 uppercase tracking-wider hidden lg:block">System</p>
+</div>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined">folder_shared</span>
+<span class="text-sm font-medium hidden lg:block">Documents</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined">settings_applications</span>
+<span class="text-sm font-medium hidden lg:block">Configuration</span>
+</a>
+</nav>
+<div class="p-4 border-t border-border-dark">
+<div class="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 cursor-pointer">
+<div class="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-purple-500 flex items-center justify-center text-xs font-bold text-white">
+                    JD
+                </div>
+<div class="hidden lg:block">
+<p class="text-sm font-medium text-white">John Doe</p>
+<p class="text-xs text-gray-500">Pro Investor</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col h-full relative overflow-hidden">
+<!-- Top Navigation -->
+<header class="h-16 flex items-center justify-between px-6 border-b border-border-dark bg-background-dark/95 backdrop-blur z-20 sticky top-0">
+<!-- Search -->
+<div class="flex-1 max-w-xl">
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500 group-focus-within:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="block w-full pl-10 pr-3 py-2 border-none rounded-lg leading-5 bg-surface-dark text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:bg-background-dark sm:text-sm transition-all shadow-inner" placeholder="Search address, APN, or auction ID..." type="text"/>
+<div class="absolute inset-y-0 right-0 pr-2 flex items-center">
+<span class="text-xs text-gray-600 border border-gray-700 rounded px-1.5 py-0.5">CMD+K</span>
+</div>
+</div>
+</div>
+<!-- Right Actions -->
+<div class="flex items-center gap-4 ml-4">
+<!-- Ticker placeholder -->
+<div class="hidden xl:flex items-center gap-4 text-xs font-mono text-gray-400 mr-4 border-r border-border-dark pr-4">
+<span class="flex items-center gap-1"><span class="text-emerald-500">▲</span> NY: +2.4%</span>
+<span class="flex items-center gap-1"><span class="text-red-500">▼</span> CA: -0.8%</span>
+<span class="flex items-center gap-1 text-primary">● LIVE: 42 Auctions</span>
+</div>
+<button class="relative p-2 text-gray-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[22px]">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-background-dark"></span>
+</button>
+<button class="p-2 text-gray-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[22px]">help</span>
+</button>
+</div>
+</header>
+<!-- Dashboard Scrollable Area -->
+<div class="flex-1 overflow-y-auto p-4 lg:p-8 scroll-smooth">
+<div class="max-w-[1600px] mx-auto flex flex-col gap-6">
+<!-- Stats Row -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="bg-surface-dark border border-border-dark rounded-lg p-5 flex flex-col gap-3 relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl text-primary">data_usage</span>
+</div>
+<p class="text-gray-400 text-sm font-medium">Total Opportunities</p>
+<div class="flex items-end gap-3">
+<p class="text-3xl font-bold text-white tracking-tight tabular-nums">1,240</p>
+<span class="text-emerald-500 text-sm font-medium mb-1 bg-emerald-500/10 px-1.5 py-0.5 rounded flex items-center">
+<span class="material-symbols-outlined text-sm mr-0.5">trending_up</span> +5%
+                            </span>
+</div>
+<div class="w-full bg-gray-800 h-1 rounded-full mt-2 overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 70%"></div>
+</div>
+</div>
+<div class="bg-surface-dark border border-border-dark rounded-lg p-5 flex flex-col gap-3 relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl text-emerald-500">monetization_on</span>
+</div>
+<p class="text-gray-400 text-sm font-medium">Avg. Equity Spread</p>
+<div class="flex items-end gap-3">
+<p class="text-3xl font-bold text-white tracking-tight tabular-nums">22.4%</p>
+<span class="text-emerald-500 text-sm font-medium mb-1 bg-emerald-500/10 px-1.5 py-0.5 rounded flex items-center">
+<span class="material-symbols-outlined text-sm mr-0.5">trending_up</span> +0.8%
+                            </span>
+</div>
+<div class="w-full bg-gray-800 h-1 rounded-full mt-2 overflow-hidden">
+<div class="bg-emerald-500 h-full rounded-full" style="width: 45%"></div>
+</div>
+</div>
+<div class="bg-surface-dark border border-border-dark rounded-lg p-5 flex flex-col gap-3 relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl text-orange-500">gavel</span>
+</div>
+<p class="text-gray-400 text-sm font-medium">Auctions (24h)</p>
+<div class="flex items-end gap-3">
+<p class="text-3xl font-bold text-white tracking-tight tabular-nums">42</p>
+<span class="text-orange-400 text-sm font-medium mb-1 bg-orange-500/10 px-1.5 py-0.5 rounded flex items-center">
+<span class="material-symbols-outlined text-sm mr-0.5">priority_high</span> Urgent
+                            </span>
+</div>
+<div class="w-full bg-gray-800 h-1 rounded-full mt-2 overflow-hidden">
+<div class="bg-orange-500 h-full rounded-full" style="width: 85%"></div>
+</div>
+</div>
+</div>
+<!-- Toolbar -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+<!-- Segmented Control -->
+<div class="bg-surface-dark p-1 rounded-lg border border-border-dark inline-flex">
+<button class="px-4 py-1.5 rounded text-sm font-medium bg-background-dark text-white shadow-sm transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">grid_view</span> Data Grid
+                        </button>
+<button class="px-4 py-1.5 rounded text-sm font-medium text-gray-400 hover:text-white transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">view_kanban</span> Kanban
+                        </button>
+<button class="px-4 py-1.5 rounded text-sm font-medium text-gray-400 hover:text-white transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">map</span> Map
+                        </button>
+</div>
+<!-- Filter Chips -->
+<div class="flex flex-wrap gap-2">
+<button class="px-3 py-1.5 rounded-lg border border-border-dark bg-surface-dark text-sm text-gray-300 hover:border-primary hover:text-primary transition-colors flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px]">filter_list</span> All Filters
+                        </button>
+<button class="px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-sm font-medium flex items-center gap-1.5">
+                            High Equity <span class="material-symbols-outlined text-[16px]">close</span>
+</button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-dark text-gray-400 border border-border-dark hover:border-gray-500 text-sm font-medium flex items-center gap-1.5 transition-colors">
+                            Underpriced
+                        </button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-dark text-gray-400 border border-border-dark hover:border-gray-500 text-sm font-medium flex items-center gap-1.5 transition-colors">
+                            Cash Flow
+                        </button>
+</div>
+</div>
+<!-- Main Data Grid -->
+<div class="bg-surface-dark border border-border-dark rounded-lg overflow-hidden shadow-xl flex-1 flex flex-col">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-black/20 border-b border-border-dark text-xs uppercase tracking-wider text-gray-500">
+<th class="p-4 font-semibold w-12 text-center">
+<input class="rounded border-gray-600 bg-transparent text-primary focus:ring-0 focus:ring-offset-0" type="checkbox"/>
+</th>
+<th class="p-4 font-semibold min-w-[200px]">Property</th>
+<th class="p-4 font-semibold">Auction Date</th>
+<th class="p-4 font-semibold text-right">Opening Bid</th>
+<th class="p-4 font-semibold text-right">Est. Resale (ARV)</th>
+<th class="p-4 font-semibold text-right">Spread</th>
+<th class="p-4 font-semibold text-center">AI Confidence</th>
+<th class="p-4 font-semibold text-center">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-dark text-sm">
+<!-- Row 1 -->
+<tr class="group hover:bg-white/[0.02] transition-colors cursor-pointer">
+<td class="p-4 text-center">
+<input class="rounded border-gray-600 bg-transparent text-primary focus:ring-0 focus:ring-offset-0 opacity-30 group-hover:opacity-100 transition-opacity" type="checkbox"/>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-cover bg-center shrink-0 border border-border-dark" data-alt="Small thumbnail of a suburban house" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAR5ezaTNWPYsdE_h-boeQ0WvAWBqRRjMKBG4qdYFWlnOeigYzQyfu4wcZZ5N0_7HLNTGQzncbLPBgOdGCT3WLsP4xjenRg9OG4Y2X7rhdOPtbkuAKLLt0EzWFrZd-70WuTW6C0DNviySiL9ffYvN_nrSJH3aEqE0VejqNF_qg66T1OhBC1-9x3pJFcKLKu5_WxSoMx85v-QgXzptLj5FuRS71yP5xkCZbmgWlsV8jSI628FQ_E0-_2Eq_vBEmrCEdo6PVBTVp3');"></div>
+<div>
+<div class="text-white font-medium">1240 Willow Creek Ln</div>
+<div class="text-gray-500 text-xs">Sacramento, CA 95814</div>
+</div>
+</div>
+</td>
+<td class="p-4 text-gray-400 tabular-nums">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                                            Today, 2:00 PM
+                                        </div>
+</td>
+<td class="p-4 text-right text-white font-medium tabular-nums">$245,000</td>
+<td class="p-4 text-right text-gray-400 tabular-nums">$420,000</td>
+<td class="p-4 text-right">
+<span class="text-emerald-400 font-medium tabular-nums">+41.6%</span>
+</td>
+<td class="p-4 text-center">
+<div class="inline-flex items-center gap-2 px-2 py-1 rounded border border-primary/30 bg-primary/10">
+<span class="material-symbols-outlined text-primary text-sm">smart_toy</span>
+<span class="text-primary font-bold text-xs">94</span>
+</div>
+</td>
+<td class="p-4 text-center">
+<button class="text-gray-400 hover:text-white p-1 rounded hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="group hover:bg-white/[0.02] transition-colors cursor-pointer">
+<td class="p-4 text-center">
+<input class="rounded border-gray-600 bg-transparent text-primary focus:ring-0 focus:ring-offset-0 opacity-30 group-hover:opacity-100 transition-opacity" type="checkbox"/>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-cover bg-center shrink-0 border border-border-dark" data-alt="Small thumbnail of a modern apartment building" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAvQsw05HGTr8tKQaK9I2Yg-iFxVhYZmU4bOlcuezVlTrzcxWuj3NUZ2yeR7cm2jtGozuHovDSkAA94XWDEsOZY_3sWsmSD4q-KR9ixdUvs_HDsRWxelP6Eh6mjGPJmDSsGpfVi0ouxbCQn0Tt4wfBeYlrhGGNzWK-GqPFMNaklCh509jtHfD3lgEwQbUqFk8kPi9DqbLUS1VvM2vHF1NAo3jswsMaLyZNFcNZolCcz6rP3w-08bs_7d6Uqe_caBSfxL7aj5EWR');"></div>
+<div>
+<div class="text-white font-medium">8502 Ocean View Blvd</div>
+<div class="text-gray-500 text-xs">San Diego, CA 92101</div>
+</div>
+</div>
+</td>
+<td class="p-4 text-gray-400 tabular-nums">
+                                        Oct 24, 10:00 AM
+                                    </td>
+<td class="p-4 text-right text-white font-medium tabular-nums">$580,000</td>
+<td class="p-4 text-right text-gray-400 tabular-nums">$710,000</td>
+<td class="p-4 text-right">
+<span class="text-emerald-400 font-medium tabular-nums">+22.4%</span>
+</td>
+<td class="p-4 text-center">
+<div class="inline-flex items-center gap-2 px-2 py-1 rounded border border-emerald-500/30 bg-emerald-500/10">
+<span class="material-symbols-outlined text-emerald-500 text-sm">bolt</span>
+<span class="text-emerald-500 font-bold text-xs">88</span>
+</div>
+</td>
+<td class="p-4 text-center">
+<button class="text-gray-400 hover:text-white p-1 rounded hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="group hover:bg-white/[0.02] transition-colors cursor-pointer">
+<td class="p-4 text-center">
+<input class="rounded border-gray-600 bg-transparent text-primary focus:ring-0 focus:ring-offset-0 opacity-30 group-hover:opacity-100 transition-opacity" type="checkbox"/>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-cover bg-center shrink-0 border border-border-dark" data-alt="Small thumbnail of a brick townhome" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAVM52CyBZKuKXHcqVyiDcUyNLdqFVF4nNRWogdZLs8qtKnLyb-SZrHkSEreaDQc8j0wJJV73-OpTB0fHEOimzlz243O0fY4uPyZELWZ5FK7NwsGfqfpAGBKluI6pI-e_K7ls3klffgERuwkAB-96b5-CFvxV7S123KJS4YBXJdTe5xlS1aCcFVWXQbZcbjNrGhKzYfhR-rmYToUc-5EtmwGLBjwQQi-sq9ztG-AM15hVVKxMDFN3oyOf1Bt-16nJ7DJp1rZYwx');"></div>
+<div>
+<div class="text-white font-medium">4409 Maplewood Ave</div>
+<div class="text-gray-500 text-xs">Los Angeles, CA 90004</div>
+</div>
+</div>
+</td>
+<td class="p-4 text-gray-400 tabular-nums">
+                                        Oct 25, 09:30 AM
+                                    </td>
+<td class="p-4 text-right text-white font-medium tabular-nums">$890,000</td>
+<td class="p-4 text-right text-gray-400 tabular-nums">$950,000</td>
+<td class="p-4 text-right">
+<span class="text-yellow-500 font-medium tabular-nums">+6.7%</span>
+</td>
+<td class="p-4 text-center">
+<div class="inline-flex items-center gap-2 px-2 py-1 rounded border border-yellow-500/30 bg-yellow-500/10">
+<span class="material-symbols-outlined text-yellow-500 text-sm">warning</span>
+<span class="text-yellow-500 font-bold text-xs">65</span>
+</div>
+</td>
+<td class="p-4 text-center">
+<button class="text-gray-400 hover:text-white p-1 rounded hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="group hover:bg-white/[0.02] transition-colors cursor-pointer">
+<td class="p-4 text-center">
+<input class="rounded border-gray-600 bg-transparent text-primary focus:ring-0 focus:ring-offset-0 opacity-30 group-hover:opacity-100 transition-opacity" type="checkbox"/>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-cover bg-center shrink-0 border border-border-dark" data-alt="Small thumbnail of a single family home" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDtsNaovPtiNUomCKgIxgGH0Dg0tXdXcFgFxeK62fkaaWGQOrt-4UiiLDJSrimoFtwcMSmn38YLvDX6SEcaBWxULDFmn-ffalC4l58kzUJ-AGOg0F-AKugf00O7DS3xUkb4gR0XqFFcTkVGxsYOlAQxk_Du11s4J3B6Tq87UowQbr8ix1feIzC9PihttFEzCkqxqwtWWtUa6Av_xtKRx424SiLwGRsSaO-0gYr_Oq0gE5kR7c2rUHf5WdR7v3eIxp4XfSktEuG9');"></div>
+<div>
+<div class="text-white font-medium">772 Pine Ridge Dr</div>
+<div class="text-gray-500 text-xs">Roseville, CA 95661</div>
+</div>
+</div>
+</td>
+<td class="p-4 text-gray-400 tabular-nums">
+                                        Oct 26, 11:00 AM
+                                    </td>
+<td class="p-4 text-right text-white font-medium tabular-nums">$310,000</td>
+<td class="p-4 text-right text-gray-400 tabular-nums">$480,000</td>
+<td class="p-4 text-right">
+<span class="text-emerald-400 font-medium tabular-nums">+54.8%</span>
+</td>
+<td class="p-4 text-center">
+<div class="inline-flex items-center gap-2 px-2 py-1 rounded border border-primary/30 bg-primary/10">
+<span class="material-symbols-outlined text-primary text-sm">smart_toy</span>
+<span class="text-primary font-bold text-xs">91</span>
+</div>
+</td>
+<td class="p-4 text-center">
+<button class="text-gray-400 hover:text-white p-1 rounded hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="group hover:bg-white/[0.02] transition-colors cursor-pointer">
+<td class="p-4 text-center">
+<input class="rounded border-gray-600 bg-transparent text-primary focus:ring-0 focus:ring-offset-0 opacity-30 group-hover:opacity-100 transition-opacity" type="checkbox"/>
+</td>
+<td class="p-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-cover bg-center shrink-0 border border-border-dark" data-alt="Small thumbnail of a distressed property" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCRyhjaJ6dWrTC79mzNywH2DL9OC7S8jtRJp2XOSlPg5EwFaaGjP2iA7rSzgjK9MK77wwCfNpSQk81IgMAmRoVGPkQ7omJOPSw21DZ2tR3onywACEKIzDWDeaTv1xM5Fl9Yz6zfHGV7W_hChHuEfxJgQsqIOxicaFQV1pGwnlU-UmUDHtOpPmPrN0LYqQb0L5K1t7SFY5pBxc50Hp8tD8zQuSzvGi8yv1NbpkIC5b0rSS4bOOU0k-3F9R7McdsKulPH1dLnxbyM');"></div>
+<div>
+<div class="text-white font-medium">2020 Elm Street</div>
+<div class="text-gray-500 text-xs">Modesto, CA 95354</div>
+</div>
+</div>
+</td>
+<td class="p-4 text-gray-400 tabular-nums">
+                                        Oct 27, 09:00 AM
+                                    </td>
+<td class="p-4 text-right text-white font-medium tabular-nums">$185,000</td>
+<td class="p-4 text-right text-gray-400 tabular-nums">$290,000</td>
+<td class="p-4 text-right">
+<span class="text-emerald-400 font-medium tabular-nums">+56.7%</span>
+</td>
+<td class="p-4 text-center">
+<div class="inline-flex items-center gap-2 px-2 py-1 rounded border border-orange-500/30 bg-orange-500/10">
+<span class="material-symbols-outlined text-orange-500 text-sm">construction</span>
+<span class="text-orange-500 font-bold text-xs">72</span>
+</div>
+</td>
+<td class="p-4 text-center">
+<button class="text-gray-400 hover:text-white p-1 rounded hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="p-4 border-t border-border-dark flex items-center justify-between bg-black/10">
+<span class="text-xs text-gray-500">Showing 1-5 of 1,240 results</span>
+<div class="flex gap-2">
+<button class="px-3 py-1 rounded border border-border-dark text-gray-400 hover:text-white hover:bg-white/5 text-xs transition-colors">Previous</button>
+<button class="px-3 py-1 rounded border border-border-dark bg-white/5 text-white text-xs transition-colors">1</button>
+<button class="px-3 py-1 rounded border border-border-dark text-gray-400 hover:text-white hover:bg-white/5 text-xs transition-colors">2</button>
+<button class="px-3 py-1 rounded border border-border-dark text-gray-400 hover:text-white hover:bg-white/5 text-xs transition-colors">3</button>
+<span class="text-gray-600 text-xs self-end pb-1">...</span>
+<button class="px-3 py-1 rounded border border-border-dark text-gray-400 hover:text-white hover:bg-white/5 text-xs transition-colors">Next</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

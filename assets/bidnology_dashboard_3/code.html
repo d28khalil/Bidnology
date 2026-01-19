@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Bidnology - Watchlist</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2b6cee",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                        "surface-dark": "#181b21", // Slightly lighter for cards/panels
+                        "border-dark": "#282e39",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #101622; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #282e39; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3b4354; 
+        }
+        .glass-effect {
+            background: rgba(16, 22, 34, 0.7);
+            backdrop-filter: blur(10px);
+        }input[type=range] {
+            -webkit-appearance: none; 
+            background: transparent; 
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #2b6cee;
+            cursor: pointer;
+            margin-top: -6px; 
+            box-shadow: 0 0 0 2px #101622;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #282e39;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display h-screen flex overflow-hidden selection:bg-primary selection:text-white">
+<aside class="w-20 lg:w-64 flex flex-col border-r border-border-dark bg-background-dark shrink-0 transition-all duration-300">
+<div class="h-16 flex items-center justify-center lg:justify-start lg:px-6 border-b border-border-dark">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-3xl">token</span>
+<span class="text-xl font-bold tracking-tight hidden lg:block text-white">Bidnology</span>
+</div>
+</div>
+<nav class="flex-1 overflow-y-auto py-6 px-2 lg:px-4 gap-2 flex flex-col">
+<div class="lg:px-2 pb-2">
+<p class="text-xs font-semibold text-gray-500 uppercase tracking-wider hidden lg:block">Intelligence</p>
+</div>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined">table_chart</span>
+<span class="text-sm font-medium hidden lg:block">Live Feed</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined">view_kanban</span>
+<span class="text-sm font-medium hidden lg:block">Deal Pipeline</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/20 text-primary group" href="#">
+<span class="material-symbols-outlined">smart_toy</span>
+<span class="text-sm font-medium hidden lg:block">AI Watchlist</span>
+<span class="ml-auto w-2 h-2 rounded-full bg-orange-500 hidden lg:block animate-pulse"></span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-sm font-medium hidden lg:block">Analytics</span>
+</a>
+<div class="mt-8 lg:px-2 pb-2">
+<p class="text-xs font-semibold text-gray-500 uppercase tracking-wider hidden lg:block">System</p>
+</div>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined">folder_shared</span>
+<span class="text-sm font-medium hidden lg:block">Documents</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors group" href="#">
+<span class="material-symbols-outlined">settings_applications</span>
+<span class="text-sm font-medium hidden lg:block">Configuration</span>
+</a>
+</nav>
+<div class="p-4 border-t border-border-dark">
+<div class="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 cursor-pointer">
+<div class="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-purple-500 flex items-center justify-center text-xs font-bold text-white">
+                    JD
+                </div>
+<div class="hidden lg:block">
+<p class="text-sm font-medium text-white">John Doe</p>
+<p class="text-xs text-gray-500">Pro Investor</p>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col h-full relative overflow-hidden">
+<header class="h-16 flex items-center justify-between px-6 border-b border-border-dark bg-background-dark/95 backdrop-blur z-20 sticky top-0">
+<div class="flex-1 max-w-xl">
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500 group-focus-within:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="block w-full pl-10 pr-3 py-2 border-none rounded-lg leading-5 bg-surface-dark text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:bg-background-dark sm:text-sm transition-all shadow-inner" placeholder="Filter watchlist..." type="text"/>
+<div class="absolute inset-y-0 right-0 pr-2 flex items-center">
+<span class="text-xs text-gray-600 border border-gray-700 rounded px-1.5 py-0.5">CMD+F</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4 ml-4">
+<div class="hidden xl:flex items-center gap-4 text-xs font-mono text-gray-400 mr-4 border-r border-border-dark pr-4">
+<span class="flex items-center gap-1"><span class="text-emerald-500">●</span> Watchlist Active</span>
+<span class="flex items-center gap-1"><span class="text-orange-500">!</span> 5 Alerts</span>
+</div>
+<button class="relative p-2 text-gray-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[22px]">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-background-dark"></span>
+</button>
+<button class="p-2 text-gray-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[22px]">help</span>
+</button>
+</div>
+</header>
+<div class="flex-1 overflow-y-auto p-4 lg:p-8 scroll-smooth">
+<div class="max-w-[1600px] mx-auto flex flex-col gap-6">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="bg-surface-dark border border-border-dark rounded-lg p-5 flex flex-col gap-3 relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl text-primary">visibility</span>
+</div>
+<p class="text-gray-400 text-sm font-medium">Properties Watched</p>
+<div class="flex items-end gap-3">
+<p class="text-3xl font-bold text-white tracking-tight tabular-nums">28</p>
+<span class="text-emerald-500 text-sm font-medium mb-1 bg-emerald-500/10 px-1.5 py-0.5 rounded flex items-center">
+<span class="material-symbols-outlined text-sm mr-0.5">add</span> 3 New
+                            </span>
+</div>
+</div>
+<div class="bg-surface-dark border border-border-dark rounded-lg p-5 flex flex-col gap-3 relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl text-orange-500">notifications_active</span>
+</div>
+<p class="text-gray-400 text-sm font-medium">Critical Alerts</p>
+<div class="flex items-end gap-3">
+<p class="text-3xl font-bold text-white tracking-tight tabular-nums">5</p>
+<span class="text-orange-400 text-sm font-medium mb-1 bg-orange-500/10 px-1.5 py-0.5 rounded flex items-center">
+<span class="material-symbols-outlined text-sm mr-0.5">priority_high</span> Action Req.
+                            </span>
+</div>
+</div>
+<div class="bg-surface-dark border border-border-dark rounded-lg p-5 flex flex-col gap-3 relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-6xl text-emerald-500">savings</span>
+</div>
+<p class="text-gray-400 text-sm font-medium">Potential Equity</p>
+<div class="flex items-end gap-3">
+<p class="text-3xl font-bold text-white tracking-tight tabular-nums">$3.8M</p>
+<span class="text-gray-500 text-sm font-medium mb-1">
+                                Total spread in watchlist
+                            </span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+<div class="xl:col-span-8 flex flex-col gap-4">
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+<h2 class="text-lg font-bold text-white">Tracking 28 Properties</h2>
+<div class="flex gap-2">
+<button class="px-3 py-1.5 rounded-lg bg-surface-dark border border-border-dark hover:bg-white/5 text-sm text-gray-300 transition-colors flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px]">sort</span> Sort by: Date
+                            </button>
+<button class="px-3 py-1.5 rounded-lg bg-primary/10 text-primary border border-primary/20 text-sm font-medium flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px]">add</span> Add Property
+                            </button>
+</div>
+</div>
+<div class="bg-surface-dark border border-border-dark rounded-lg overflow-hidden shadow-xl flex-1 flex flex-col">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-black/20 border-b border-border-dark text-xs uppercase tracking-wider text-gray-500">
+<th class="p-4 font-semibold min-w-[200px]">Property Details</th>
+<th class="p-4 font-semibold">Auction</th>
+<th class="p-4 font-semibold text-right">Target Bid</th>
+<th class="p-4 font-semibold text-right">Projected Spread</th>
+<th class="p-4 font-semibold text-center">Alert Status</th>
+<th class="p-4 font-semibold w-12"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-dark text-sm">
+<tr class="group hover:bg-white/[0.02] transition-colors cursor-pointer border-l-4 border-l-red-500 bg-red-500/[0.02]">
+<td class="p-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded bg-cover bg-center shrink-0 border border-border-dark" data-alt="Small thumbnail of a suburban house" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAR5ezaTNWPYsdE_h-boeQ0WvAWBqRRjMKBG4qdYFWlnOeigYzQyfu4wcZZ5N0_7HLNTGQzncbLPBgOdGCT3WLsP4xjenRg9OG4Y2X7rhdOPtbkuAKLLt0EzWFrZd-70WuTW6C0DNviySiL9ffYvN_nrSJH3aEqE0VejqNF_qg66T1OhBC1-9x3pJFcKLKu5_WxSoMx85v-QgXzptLj5FuRS71yP5xkCZbmgWlsV8jSI628FQ_E0-_2Eq_vBEmrCEdo6PVBTVp3');"></div>
+<div>
+<div class="text-white font-medium flex items-center gap-2">
+                                                        1240 Willow Creek Ln
+                                                        <span class="px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 text-[10px] font-bold uppercase tracking-wide border border-red-500/20">Hot</span>
+</div>
+<div class="text-gray-500 text-xs mt-0.5">Sacramento, CA • 3bd/2ba</div>
+</div>
+</div>
+</td>
+<td class="p-4 text-gray-300 tabular-nums">
+<div class="flex flex-col">
+<span class="font-medium text-white">Today</span>
+<span class="text-xs text-red-400 animate-pulse">2:00 PM PST</span>
+</div>
+</td>
+<td class="p-4 text-right text-white font-medium tabular-nums">$245k</td>
+<td class="p-4 text-right">
+<div class="flex flex-col items-end">
+<span class="text-emerald-400 font-bold tabular-nums">+$175k</span>
+<span class="text-xs text-emerald-500/70">41.6% ROI</span>
+</div>
+</td>
+<td class="p-4 text-center">
+<span class="inline-flex items-center gap-1 text-xs font-medium text-red-400 bg-red-400/10 px-2 py-1 rounded border border-red-400/20">
+<span class="material-symbols-outlined text-[14px]">trending_down</span> Price Drop
+                                                </span>
+</td>
+<td class="p-4 text-center">
+<button class="text-gray-400 hover:text-white p-1 rounded hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</td>
+</tr>
+<tr class="group hover:bg-white/[0.02] transition-colors cursor-pointer border-l-4 border-l-transparent hover:border-l-border-dark">
+<td class="p-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded bg-cover bg-center shrink-0 border border-border-dark" data-alt="Small thumbnail of a modern apartment" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAvQsw05HGTr8tKQaK9I2Yg-iFxVhYZmU4bOlcuezVlTrzcxWuj3NUZ2yeR7cm2jtGozuHovDSkAA94XWDEsOZY_3sWsmSD4q-KR9ixdUvs_HDsRWxelP6Eh6mjGPJmDSsGpfVi0ouxbCQn0Tt4wfBeYlrhGGNzWK-GqPFMNaklCh509jtHfD3lgEwQbUqFk8kPi9DqbLUS1VvM2vHF1NAo3jswsMaLyZNFcNZolCcz6rP3w-08bs_7d6Uqe_caBSfxL7aj5EWR');"></div>
+<div>
+<div class="text-white font-medium">8502 Ocean View Blvd</div>
+<div class="text-gray-500 text-xs mt-0.5">San Diego, CA • Condo</div>
+</div>
+</div>
+</td>
+<td class="p-4 text-gray-300 tabular-nums">
+<div class="flex flex-col">
+<span class="font-medium">Oct 24</span>
+<span class="text-xs text-gray-500">10:00 AM</span>
+</div>
+</td>
+<td class="p-4 text-right text-white font-medium tabular-nums">$580k</td>
+<td class="p-4 text-right">
+<div class="flex flex-col items-end">
+<span class="text-emerald-400 font-bold tabular-nums">+$130k</span>
+<span class="text-xs text-emerald-500/70">22.4% ROI</span>
+</div>
+</td>
+<td class="p-4 text-center">
+<span class="inline-flex items-center gap-1 text-xs font-medium text-orange-400 bg-orange-400/10 px-2 py-1 rounded border border-orange-400/20">
+<span class="material-symbols-outlined text-[14px]">description</span> New Docs
+                                                </span>
+</td>
+<td class="p-4 text-center">
+<button class="text-gray-400 hover:text-white p-1 rounded hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</td>
+</tr>
+<tr class="group hover:bg-white/[0.02] transition-colors cursor-pointer border-l-4 border-l-transparent hover:border-l-border-dark">
+<td class="p-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded bg-cover bg-center shrink-0 border border-border-dark" data-alt="Small thumbnail of a brick townhome" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAVM52CyBZKuKXHcqVyiDcUyNLdqFVF4nNRWogdZLs8qtKnLyb-SZrHkSEreaDQc8j0wJJV73-OpTB0fHEOimzlz243O0fY4uPyZELWZ5FK7NwsGfqfpAGBKluI6pI-e_K7ls3klffgERuwkAB-96b5-CFvxV7S123KJS4YBXJdTe5xlS1aCcFVWXQbZcbjNrGhKzYfhR-rmYToUc-5EtmwGLBjwQQi-sq9ztG-AM15hVVKxMDFN3oyOf1Bt-16nJ7DJp1rZYwx');"></div>
+<div>
+<div class="text-white font-medium">4409 Maplewood Ave</div>
+<div class="text-gray-500 text-xs mt-0.5">Los Angeles, CA • Multi-Family</div>
+</div>
+</div>
+</td>
+<td class="p-4 text-gray-300 tabular-nums">
+<div class="flex flex-col">
+<span class="font-medium">Oct 25</span>
+<span class="text-xs text-gray-500">09:30 AM</span>
+</div>
+</td>
+<td class="p-4 text-right text-white font-medium tabular-nums">$890k</td>
+<td class="p-4 text-right">
+<div class="flex flex-col items-end">
+<span class="text-emerald-400 font-bold tabular-nums">+$60k</span>
+<span class="text-xs text-emerald-500/70">6.7% ROI</span>
+</div>
+</td>
+<td class="p-4 text-center">
+<span class="inline-flex items-center gap-1 text-xs font-medium text-gray-400 bg-gray-700/30 px-2 py-1 rounded border border-gray-600/30">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> All Clear
+                                                </span>
+</td>
+<td class="p-4 text-center">
+<button class="text-gray-400 hover:text-white p-1 rounded hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</td>
+</tr>
+<tr class="group hover:bg-white/[0.02] transition-colors cursor-pointer border-l-4 border-l-transparent hover:border-l-border-dark">
+<td class="p-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded bg-cover bg-center shrink-0 border border-border-dark" data-alt="Small thumbnail of a single family home" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDtsNaovPtiNUomCKgIxgGH0Dg0tXdXcFgFxeK62fkaaWGQOrt-4UiiLDJSrimoFtwcMSmn38YLvDX6SEcaBWxULDFmn-ffalC4l58kzUJ-AGOg0F-AKugf00O7DS3xUkb4gR0XqFFcTkVGxsYOlAQxk_Du11s4J3B6Tq87UowQbr8ix1feIzC9PihttFEzCkqxqwtWWtUa6Av_xtKRx424SiLwGRsSaO-0gYr_Oq0gE5kR7c2rUHf5WdR7v3eIxp4XfSktEuG9');"></div>
+<div>
+<div class="text-white font-medium">772 Pine Ridge Dr</div>
+<div class="text-gray-500 text-xs mt-0.5">Roseville, CA • SFH</div>
+</div>
+</div>
+</td>
+<td class="p-4 text-gray-300 tabular-nums">
+<div class="flex flex-col">
+<span class="font-medium">Oct 26</span>
+<span class="text-xs text-gray-500">11:00 AM</span>
+</div>
+</td>
+<td class="p-4 text-right text-white font-medium tabular-nums">$310k</td>
+<td class="p-4 text-right">
+<div class="flex flex-col items-end">
+<span class="text-emerald-400 font-bold tabular-nums">+$170k</span>
+<span class="text-xs text-emerald-500/70">54.8% ROI</span>
+</div>
+</td>
+<td class="p-4 text-center">
+<span class="inline-flex items-center gap-1 text-xs font-medium text-blue-400 bg-blue-400/10 px-2 py-1 rounded border border-blue-400/20">
+<span class="material-symbols-outlined text-[14px]">visibility</span> New View
+                                                </span>
+</td>
+<td class="p-4 text-center">
+<button class="text-gray-400 hover:text-white p-1 rounded hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-[20px]">chevron_right</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="xl:col-span-4 flex flex-col gap-6">
+<div class="bg-surface-dark border border-border-dark rounded-lg p-5 flex flex-col h-fit shadow-lg">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-white font-bold flex items-center gap-2 text-sm uppercase tracking-wide">
+<span class="material-symbols-outlined text-orange-500 text-lg">notifications</span>
+                                Recent Activity
+                            </h3>
+<button class="text-xs text-primary hover:text-white transition-colors">Mark all read</button>
+</div>
+<div class="space-y-4">
+<div class="flex gap-3 items-start p-3 rounded bg-background-dark border border-border-dark/50 relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-red-500"></div>
+<div class="mt-0.5">
+<span class="material-symbols-outlined text-red-400 text-lg">trending_down</span>
+</div>
+<div>
+<p class="text-sm text-gray-200 font-medium">Opening Bid Drop</p>
+<p class="text-xs text-gray-500 mt-0.5">1240 Willow Creek Ln dropped by <span class="text-white font-mono">$15,000</span>.</p>
+<p class="text-[10px] text-gray-600 mt-2">15 mins ago</p>
+</div>
+</div>
+<div class="flex gap-3 items-start p-3 rounded bg-background-dark border border-border-dark/50 relative overflow-hidden group hover:border-primary/30 transition-colors cursor-pointer">
+<div class="mt-0.5">
+<span class="material-symbols-outlined text-orange-400 text-lg">gavel</span>
+</div>
+<div>
+<p class="text-sm text-gray-200 font-medium">Auction Rescheduled</p>
+<p class="text-xs text-gray-500 mt-0.5">2020 Elm Street postponed to <span class="text-white">Nov 12</span>.</p>
+<p class="text-[10px] text-gray-600 mt-2">1 hour ago</p>
+</div>
+</div>
+<div class="flex gap-3 items-start p-3 rounded bg-background-dark border border-border-dark/50 relative overflow-hidden group hover:border-primary/30 transition-colors cursor-pointer">
+<div class="mt-0.5">
+<span class="material-symbols-outlined text-blue-400 text-lg">folder_open</span>
+</div>
+<div>
+<p class="text-sm text-gray-200 font-medium">Title Report Ready</p>
+<p class="text-xs text-gray-500 mt-0.5">Preliminary report for 8502 Ocean View is available.</p>
+<p class="text-[10px] text-gray-600 mt-2">3 hours ago</p>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-surface-dark border border-border-dark rounded-lg p-5 flex flex-col shadow-lg">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-white font-bold flex items-center gap-2 text-sm uppercase tracking-wide">
+<span class="material-symbols-outlined text-primary text-lg">tune</span>
+                                Criteria Watch
+                            </h3>
+<span class="text-[10px] px-1.5 py-0.5 bg-primary/20 text-primary rounded border border-primary/20">Active</span>
+</div>
+<form class="space-y-4">
+<div class="space-y-1">
+<label class="text-xs font-medium text-gray-400">Target Location</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-gray-500">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+</span>
+<input class="block w-full pl-9 pr-3 py-2 bg-background-dark border border-border-dark rounded text-sm text-white placeholder-gray-600 focus:ring-1 focus:ring-primary focus:border-primary transition-all" placeholder="City, Zip, or County" type="text" value="Sacramento County"/>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="space-y-1">
+<label class="text-xs font-medium text-gray-400">Max Bid ($)</label>
+<input class="block w-full px-3 py-2 bg-background-dark border border-border-dark rounded text-sm text-white focus:ring-1 focus:ring-primary focus:border-primary transition-all" placeholder="500,000" type="number"/>
+</div>
+<div class="space-y-1">
+<label class="text-xs font-medium text-gray-400">Min Spread (%)</label>
+<input class="block w-full px-3 py-2 bg-background-dark border border-border-dark rounded text-sm text-white focus:ring-1 focus:ring-primary focus:border-primary transition-all" placeholder="20%" type="number"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-medium text-gray-400">Asset Types</label>
+<div class="flex flex-wrap gap-2">
+<label class="inline-flex items-center cursor-pointer">
+<input checked="" class="form-checkbox h-3.5 w-3.5 text-primary border-gray-600 rounded bg-background-dark focus:ring-0 focus:ring-offset-0" type="checkbox"/>
+<span class="ml-1.5 text-xs text-gray-300">SFH</span>
+</label>
+<label class="inline-flex items-center cursor-pointer">
+<input checked="" class="form-checkbox h-3.5 w-3.5 text-primary border-gray-600 rounded bg-background-dark focus:ring-0 focus:ring-offset-0" type="checkbox"/>
+<span class="ml-1.5 text-xs text-gray-300">Multi</span>
+</label>
+<label class="inline-flex items-center cursor-pointer">
+<input class="form-checkbox h-3.5 w-3.5 text-primary border-gray-600 rounded bg-background-dark focus:ring-0 focus:ring-offset-0" type="checkbox"/>
+<span class="ml-1.5 text-xs text-gray-300">Commercial</span>
+</label>
+<label class="inline-flex items-center cursor-pointer">
+<input class="form-checkbox h-3.5 w-3.5 text-primary border-gray-600 rounded bg-background-dark focus:ring-0 focus:ring-offset-0" type="checkbox"/>
+<span class="ml-1.5 text-xs text-gray-300">Land</span>
+</label>
+</div>
+</div>
+<div class="pt-2">
+<button class="w-full py-2 px-4 bg-primary hover:bg-blue-600 text-white text-sm font-semibold rounded-lg shadow-lg shadow-blue-500/20 transition-all flex items-center justify-center gap-2" type="button">
+<span class="material-symbols-outlined text-[18px]">save</span>
+                                    Update Criteria
+                                </button>
+</div>
+</form>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+</body></html>

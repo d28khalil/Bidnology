@@ -1,0 +1,164 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 246 246 248;
+  --foreground: 15 23 42;
+}
+
+.dark {
+  --background: 16 22 34;
+  --foreground: 255 255 255;
+}
+
+body {
+  @apply bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Custom scrollbar for "Elite" feel */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #e5e7eb;
+}
+.dark ::-webkit-scrollbar-track {
+  background: #101622;
+}
+::-webkit-scrollbar-thumb {
+  background: #9ca3af;
+  border-radius: 4px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #282e39;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #3b4354;
+}
+
+.glass-effect {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+}
+.dark .glass-effect {
+  background: rgba(16, 22, 34, 0.7);
+}
+
+/* Kanban column scrollbar */
+.kanban-column::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.kanban-column::-webkit-scrollbar-track {
+  background: transparent;
+}
+.kanban-column::-webkit-scrollbar-thumb {
+  background: #282e39;
+  border-radius: 4px;
+}
+
+/* Range slider styles */
+input[type="range"] {
+  -webkit-appearance: none;
+  background: transparent;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: #2b6cee;
+  cursor: pointer;
+  margin-top: -6px;
+  box-shadow: 0 0 0 2px #ffffff;
+}
+.dark input[type="range"]::-webkit-slider-thumb {
+  box-shadow: 0 0 0 2px #101622;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 4px;
+  cursor: pointer;
+  background: #d1d5db;
+  border-radius: 2px;
+}
+.dark input[type="range"]::-webkit-slider-runnable-track {
+  background: #282e39;
+}
+
+/* Center Clerk authentication components - using fixed positioning approach */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.cl-internal-root {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.cl-root {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Clerk card container */
+.cl-componentWrapper {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+}
+
+/* Center the actual card */
+.cl-internal-4acp9t {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  transform: none !important;
+}
+
+/* Hide Clerk development badge */
+.cl-dev-badge,
+.cl-footer,
+.cl-internal-4acp9t a[href*="clerk.com"],
+.cl-internal-4acp9t a[href*="clerk.dev"],
+.cl-internal-b3pemu,
+.cl-internal-1yegh9,
+.cl-internal-kcog3n {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+/* Hide any Clerk branding links */
+a[href*="clerk.com"],
+a[href*="clerk.dev"] {
+  display: none !important;
+}
+
+/* Hide footer with powered by */
+.cl-internal-root .cl-footer,
+[class*="cl-"][class*="footer"] {
+  display: none !important;
+}

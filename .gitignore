@@ -1,0 +1,47 @@
+# Environment
+.env
+.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+venv_win/
+env/
+.venv/
+
+# Output files
+*.csv
+*.json
+!package.json
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary
+tmp/
+temp/
+*.tmp
+.venv/
+__pycache__/
+*.pyc
+.mcp.json
+
+# Moat task system
+.moat/
+
+# Claude Code configuration
+.claude/
