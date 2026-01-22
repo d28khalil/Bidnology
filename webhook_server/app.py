@@ -287,6 +287,10 @@ app.include_router(deal_intelligence_router)
 from .auth_routes import router as auth_router
 app.include_router(auth_router)
 
+# Import favorites routes
+from .favorites_routes import router as favorites_router
+app.include_router(favorites_router)
+
 # Import Discord notification service
 from .discord_service import (
     get_scraping_stats,
