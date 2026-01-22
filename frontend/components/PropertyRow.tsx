@@ -414,11 +414,12 @@ export function PropertyRow({
               console.error('Error toggling favorite:', err)
             }
           }}
-          className={`material-symbols-outlined text-[24px] transition-colors ${
+          className={`material-symbols-outlined text-[24px] transition-all ${
             isFavorited
-              ? 'text-yellow-400 fill-yellow-400'
+              ? 'text-yellow-400'
               : 'text-gray-400 dark:text-gray-600 hover:text-yellow-400 dark:hover:text-yellow-400'
           }`}
+          style={isFavorited ? { fontVariationSettings: "'FILL' 1", fontSize: '24px' } : { fontSize: '24px' }}
           title={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
         >
           star
