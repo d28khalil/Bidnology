@@ -1,0 +1,45 @@
+# Coolify configuration for Bidnology Scraper
+# Nightly scheduled job at 2 AM
+
+version: "1.0"
+
+project:
+  name: bidnology
+  description: NJ Sheriff Sale Foreclosure Platform - Scheduled Scraper
+
+# Required Environment Variables (set in Coolify UI):
+# SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_ANON_KEY
+# OPENAI_API_KEY, RAPIDAPI_KEY, WEBHOOK_SECRET
+
+services:
+  # Main webhook server (runs continuously)
+  - name: webhook-server
+    type: dockerfile
+    description: FastAPI webhook server for receiving scraped data and triggering Zillow enrichment
+    dockerfilePath: ./Dockerfile
+    port: 8080
+    env:
+      - WEBHOOK_SECRET
+      - SUPABASE_URL
+      - SUPABASE_SERVICE_ROLE_KEY
+      - SUPABASE_ANON_KEY
+      - RAPIDAPI_KEY
+      - OPENAI_API_KEY
+      - SCHEDULE_SECRET
+      - TRACERFY_API_KEY
+      - FRONTEND_URL
+
+  # Scheduled Job: Nightly scrape at 2 AM
+  - name: scraper-nightly
+    type: scheduled-job
+    description: Nightly full scrape with webhook auto-enrichment
+    schedule: "0 2 * * *"  # Daily at 2:00 AM
+    command: python playwright_scraper.py --use-webhook
+    dockerfilePath: ./Dockerfile.scraper
+    env:
+      - SUPABASE_URL
+      - SUPABASE_SERVICE_ROLE_KEY
+      - SUPABASE_KEY=SERVICE_ROLE_KEY  # Alias for service role key
+      - RAPIDAPI_KEY
+      - OPENAI_API_KEY
+      - WEBHOOK_SERVER_URL=http://webhook-server:8080

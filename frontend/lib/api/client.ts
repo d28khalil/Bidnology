@@ -829,7 +829,7 @@ export async function getUserFavorites(
   userId: string
 ): Promise<number[]> {
   const response = await fetch(
-    `/api/favorites/user/${encodeURIComponent(userId)}`
+    `${API_URL}/api/favorites/user/${encodeURIComponent(userId)}`
   )
   return handleResponse<number[]>(response)
 }
@@ -838,7 +838,7 @@ export async function addFavorite(
   userId: string,
   propertyId: number
 ): Promise<{ message: string }> {
-  const response = await fetch(`/api/favorites`, {
+  const response = await fetch(`${API_URL}/api/favorites`, {
     method: 'POST',
     headers: getHeaders(),
     body: JSON.stringify({ user_id: userId, property_id: propertyId })
@@ -850,7 +850,7 @@ export async function removeFavorite(
   userId: string,
   propertyId: number
 ): Promise<{ message: string }> {
-  const response = await fetch(`/api/favorites`, {
+  const response = await fetch(`${API_URL}/api/favorites`, {
     method: 'DELETE',
     headers: getHeaders(),
     body: JSON.stringify({ user_id: userId, property_id: propertyId })
