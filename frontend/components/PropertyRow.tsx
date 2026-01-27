@@ -71,9 +71,6 @@ interface PropertyRowProps {
   isSaved?: boolean
   onToggleSaved?: (propertyId: number) => Promise<void>
   savedLoading?: boolean
-  // Favorites functionality (separate from saved/kanban)
-  isFavorited?: boolean
-  onToggleFavorite?: (propertyId: number) => Promise<void>
   // Separate override props (for auction history)
   startingBidOverride?: number
   bidCapOverride?: number
@@ -95,8 +92,6 @@ export function PropertyRow({
   isSaved = false,
   onToggleSaved,
   savedLoading = false,
-  isFavorited = false,
-  onToggleFavorite,
   startingBidOverride,
   bidCapOverride,
   propertySoldOverride
@@ -398,32 +393,6 @@ export function PropertyRow({
             <div className="text-gray-600 dark:text-gray-500 text-xs">{`${property.city}, ${property.state} ${property.zip}`}</div>
           </div>
         </div>
-      </td>
-
-      {/* Favorites (Star) */}
-      <td className="p-4 text-center">
-        <button
-          type="button"
-          onClick={async (e) => {
-            e.stopPropagation()
-            if (!onToggleFavorite) return
-            const propertyId = parseInt(property.id)
-            try {
-              await onToggleFavorite(propertyId)
-            } catch (err) {
-              console.error('Error toggling favorite:', err)
-            }
-          }}
-          className={`material-symbols-outlined text-[24px] transition-all ${
-            isFavorited
-              ? 'text-yellow-400'
-              : 'text-gray-400 dark:text-gray-600 hover:text-yellow-400 dark:hover:text-yellow-400'
-          }`}
-          style={isFavorited ? { fontVariationSettings: "'FILL' 1", fontSize: '24px' } : { fontSize: '24px' }}
-          title={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
-        >
-          star
-        </button>
       </td>
 
       {/* County */}
