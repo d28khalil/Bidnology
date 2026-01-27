@@ -8,6 +8,7 @@ import dynamic from 'next/dynamic'
 const UserProvider = dynamic(() => import('@/contexts/UserContext').then(mod => ({ default: mod.UserProvider })), { ssr: false })
 const AppProvider = dynamic(() => import('@/contexts/AppContext').then(mod => ({ default: mod.AppProvider })), { ssr: false })
 const ThemeProvider = dynamic(() => import('@/contexts/ThemeContext').then(mod => ({ default: mod.ThemeProvider })), { ssr: false })
+const CopilotWidget = dynamic(() => import('@/components/CopilotWidget').then(mod => ({ default: mod.CopilotWidget })), { ssr: false })
 
 const manrope = Manrope({
   subsets: ['latin'],
@@ -136,6 +137,7 @@ export default function RootLayout({
               <AppProvider>{children}</AppProvider>
             </UserProvider>
           </ThemeProvider>
+          <CopilotWidget />
         </ClerkProvider>
       </body>
     </html>
