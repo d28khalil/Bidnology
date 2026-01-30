@@ -255,7 +255,7 @@ Fill this JSON with **detailed strings**.
 \`\`\`
 IMPORTANT: Complete the entire JSON object. Do NOT cut off mid-JSON. Ensure ALL closing brackets and braces are present. The est_profit_potential and break_even_offer fields are REQUIRED.`;
 
-const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:streamGenerateContent";
+const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:streamGenerateContent";
 
 async function callGeminiAPI(prompt: string, apiKey: string, onProgress?: (text: string) => void): Promise<string> {
   const response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {

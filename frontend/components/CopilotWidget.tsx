@@ -296,7 +296,7 @@ Fill this JSON with **detailed strings**.
 }
 \`\`\``
 
-const MODEL_NAME = 'gemini-2.0-flash-exp'
+const MODEL_NAME = 'gemini-2.0-flash'
 const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:streamGenerateContent`
 
 // Helper to parse JSON from text
