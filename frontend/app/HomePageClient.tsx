@@ -1629,6 +1629,9 @@ export function HomePageClient({ initialData }: HomePageClientProps) {
                   <thead className="sticky top-0 z-20">
                     <tr className="bg-gradient-to-r from-gray-100 to-gray-200 dark:from-surface-dark dark:to-[#1a1f2e] border-b-2 border-gray-300 dark:border-border-dark text-xs tracking-wider">
                         <th className="p-4 font-semibold text-gray-700 dark:text-gray-300 text-center uppercase md:sticky md:left-0 md:z-30 md:bg-gradient-to-r md:from-gray-100 md:to-gray-200 dark:md:from-surface-dark dark:md:to-[#1a1f2e] md:border-r md:border-gray-300 dark:md:border-border-dark" style={{ width: '350px' }}>Property</th>
+                        <th className="p-4 font-semibold text-gray-700 dark:text-gray-300 text-center uppercase" style={{ width: '70px' }}>
+                          <span className="material-symbols-outlined text-[20px]">star</span>
+                        </th>
                         <th className="p-4 font-semibold text-gray-700 dark:text-gray-300 text-center uppercase" style={{ width: '120px' }}>County</th>
                         <th className="p-4 font-semibold text-gray-700 dark:text-gray-300 text-center" style={{ width: '130px' }}>
                           <div className="flex items-center justify-center gap-2">
@@ -1730,6 +1733,8 @@ export function HomePageClient({ initialData }: HomePageClientProps) {
                           isSaved={isPropertySaved(typeof property.id === 'number' ? property.id : Number(property.id))}
                           onToggleSaved={handleToggleSaved}
                           savedLoading={savedLoading}
+                          isFavorited={isFavorited(typeof property.id === 'number' ? property.id : Number(property.id))}
+                          onToggleFavorite={toggleFavorite}
                         />
                       ))}
                     </tbody>
