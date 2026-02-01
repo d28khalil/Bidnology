@@ -10,6 +10,7 @@ import { useProperties, transformPropertyToRow } from '@/lib/hooks/useProperties
 import { useSkipTrace } from '@/lib/hooks/useSkipTrace'
 import { useTags } from '@/lib/hooks/useTags'
 import { usePropertyOverrides } from '@/lib/hooks/usePropertyOverrides'
+import { useFavorites } from '@/lib/hooks/useFavorites'
 import { useUser } from '@/contexts/UserContext'
 import { Property } from '@/lib/types/property'
 import { supabase } from '@/lib/supabase/client'
@@ -123,10 +124,12 @@ export function AuctionHistoryClient({ initialData }: AuctionHistoryClientProps)
   const [selectedTagId, setSelectedTagId] = useState<number | null>(null)
   const [hasNotesOnly, setHasNotesOnly] = useState(false)
   const [dateRangeFilter, setDateRangeFilter] = useState<string>('all')
+  const [favoritesOnly, setFavoritesOnly] = useState(false)
 
   // User and tags hooks
   const { userId } = useUser()
   const { tags, refetch: refetchTags, createTag } = useTags()
+  const { isFavorited, toggleFavorite } = useFavorites()
   const { getOverride, saveOverride, getOverrideHistory, revertOverride } = usePropertyOverrides(userId)
   const [propertyTagsMap, setPropertyTagsMap] = useState<Record<number, UserTag[]>>({})
   const [propertyOverridesMap, setPropertyOverridesMap] = useState<Record<number, {
@@ -212,6 +215,7 @@ export function AuctionHistoryClient({ initialData }: AuctionHistoryClientProps)
     setSelectedTagId(null)
     setHasNotesOnly(false)
     setDateRangeFilter('all')
+    setFavoritesOnly(false)
     setCurrentPage(1)
     setItemsPerPage(100)
   }
@@ -412,6 +416,14 @@ export function AuctionHistoryClient({ initialData }: AuctionHistoryClientProps)
         }
       }
 
+      // Favorites filter
+      if (favoritesOnly) {
+        const propId = typeof property.id === 'number' ? property.id : Number(property.id)
+        if (!isFavorited(propId)) {
+          return false
+        }
+      }
+
       return true
     })
 
@@ -423,7 +435,7 @@ export function AuctionHistoryClient({ initialData }: AuctionHistoryClientProps)
     }
 
     return filtered
-  }, [properties, searchQuery, selectedCounties, selectedDaysOfWeek, spreadFilter, selectedStatuses, selectedStatusHistory, selectedTagId, propertyTagsMap, propertiesWithNotes, hasNotesOnly, dateRangeFilter, spreadOrder])
+  }, [properties, searchQuery, selectedCounties, selectedDaysOfWeek, spreadFilter, selectedStatuses, selectedStatusHistory, selectedTagId, propertyTagsMap, propertiesWithNotes, hasNotesOnly, dateRangeFilter, spreadOrder, favoritesOnly, isFavorited])
 
   // Paginated properties
   const paginatedProperties = useMemo(() => {
@@ -712,7 +724,8 @@ export function AuctionHistoryClient({ initialData }: AuctionHistoryClientProps)
     selectedStatusHistory.length > 0 ||
     selectedTagId !== null ||
     hasNotesOnly ||
-    dateRangeFilter !== 'all'
+    dateRangeFilter !== 'all' ||
+    favoritesOnly
 
   // CSV Export
   const exportToCSV = async (propertiesToExport: ReturnType<typeof transformPropertyToRow>[]) => {
@@ -1269,6 +1282,19 @@ export function AuctionHistoryClient({ initialData }: AuctionHistoryClientProps)
                 <span className={`text-primary text-[10px] ${hasNotesOnly ? 'opacity-100' : 'opacity-0'} transition-opacity ml-auto`}>•</span>
               </button>
 
+              {/* Favorites Filter */}
+              <button
+                onClick={() => setFavoritesOnly(!favoritesOnly)}
+                className={`bg-white dark:bg-surface-dark border ${favoritesOnly ? 'border-yellow-400' : 'border-gray-300 dark:border-border-dark'} hover:border-gray-400 dark:hover:border-gray-500 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white px-2 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors whitespace-nowrap min-w-[90px]`}
+                title={favoritesOnly ? 'Show all properties' : 'Show only favorites'}
+              >
+                <span className={`material-symbols-outlined text-[16px] shrink-0 ${favoritesOnly ? 'text-yellow-400' : ''}`}>
+                  star
+                </span>
+                <span>Favorites</span>
+                <span className={`text-yellow-400 text-[10px] ${favoritesOnly ? 'opacity-100' : 'opacity-0'} transition-opacity ml-auto`}>•</span>
+              </button>
+
               {/* Export Dropdown */}
               <div className="relative shrink-0 snap-start ml-auto" ref={exportDropdownRef}>
                 <button
@@ -1312,6 +1338,9 @@ export function AuctionHistoryClient({ initialData }: AuctionHistoryClientProps)
                     <thead className="sticky top-0 z-20">
                       <tr className="bg-gradient-to-r from-gray-100 to-gray-200 dark:from-surface-dark dark:to-[#1a1f2e] border-b-2 border-gray-300 dark:border-border-dark text-xs tracking-wider">
                           <th className="p-4 font-semibold text-gray-700 dark:text-gray-300 text-center uppercase md:sticky md:left-0 md:z-30 md:bg-gradient-to-r md:from-gray-100 md:to-gray-200 dark:md:from-surface-dark dark:md:to-[#1a1f2e] md:border-r md:border-gray-300 dark:md:border-border-dark" style={{ width: '350px' }}>Property</th>
+                          <th className="p-4 font-semibold text-gray-700 dark:text-gray-300 text-center uppercase" style={{ width: '70px' }}>
+                            <span className="material-symbols-outlined text-[20px]">star</span>
+                          </th>
                           <th className="p-4 font-semibold text-gray-700 dark:text-gray-300 text-center uppercase" style={{ width: '120px' }}>County</th>
                           <th className="p-4 font-semibold text-gray-700 dark:text-gray-300 text-center uppercase" style={{ width: '130px' }}>
                             <button
@@ -1399,6 +1428,8 @@ export function AuctionHistoryClient({ initialData }: AuctionHistoryClientProps)
                               startingBidOverride={overrides?.startingBidOverride}
                               bidCapOverride={overrides?.bidCapOverride}
                               propertySoldOverride={overrides?.propertySoldOverride}
+                              isFavorited={isFavorited(propId)}
+                              onToggleFavorite={toggleFavorite}
                             />
                           )
                         })}
