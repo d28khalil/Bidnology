@@ -1182,6 +1182,38 @@ export function PropertyDetailModal({ property, isOpen, onClose, onSkipTrace, is
               </div>
             </div>
 
+            {/* Google Map */}
+            <div className="bg-white dark:bg-surface-dark border border-gray-300 dark:border-border-dark rounded-lg overflow-hidden">
+              <div className="flex items-center justify-between p-3 sm:p-4 border-b border-gray-300 dark:border-border-dark">
+                <h3 className="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
+                  <span className="material-symbols-outlined text-primary">map</span>
+                  Location Map
+                </h3>
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${property.address}, ${property.city}, ${property.state} ${property.zip}`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-primary hover:text-emerald-600 dark:hover:text-emerald-400 font-medium flex items-center gap-1 transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[16px]">open_in_new</span>
+                  <span className="hidden sm:inline">Open in Google Maps</span>
+                </a>
+              </div>
+              <div className="relative w-full h-64 sm:h-80">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  frameBorder="0"
+                  style={{ border: 0 }}
+                  src={`https://maps.google.com/maps?q=${encodeURIComponent(`${property.address}, ${property.city}, ${property.state} ${property.zip}`)}&output=embed`}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Property Location Map"
+                />
+              </div>
+            </div>
+
             {/* Financial Summary */}
             <div className="bg-white dark:bg-surface-dark border border-gray-300 dark:border-border-dark rounded-lg p-4 sm:p-5">
               <h3 className="text-gray-900 dark:text-white font-semibold mb-3 sm:mb-4 flex items-center gap-2">
