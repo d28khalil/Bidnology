@@ -988,20 +988,24 @@ function PropertyMap({ address, city, state, zip }: PropertyMapProps) {
   }, [address, city, state, zip])
 
   const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || ''
+  const hasValidToken = mapboxToken && mapboxToken !== 'your_mapbox_token_here'
 
-  // If no Mapbox token, show a fallback message
-  if (!mapboxToken || mapboxToken === 'your_mapbox_token_here') {
+  const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${address}, ${city}, ${state} ${zip}`)}`
+
+  // If no Mapbox token, show Google Maps link as fallback
+  if (!hasValidToken) {
     return (
       <div className="w-full h-64 sm:h-80 bg-gray-100 dark:bg-gray-800 flex flex-col items-center justify-center p-6">
         <span className="material-symbols-outlined text-4xl text-gray-400 dark:text-gray-600 mb-3">map</span>
-        <p className="text-gray-600 dark:text-gray-400 text-sm text-center mb-2">Mapbox token required</p>
+        <p className="text-gray-600 dark:text-gray-400 text-sm text-center mb-2">Interactive map unavailable</p>
         <a
-          href="https://account.mapbox.com/"
+          href={googleMapsUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-sm text-primary hover:text-emerald-600 dark:hover:text-emerald-400 font-medium"
+          className="text-sm text-primary hover:text-emerald-600 dark:hover:text-emerald-400 font-medium flex items-center gap-1"
         >
-          Get free access token →
+          <span className="material-symbols-outlined text-[16px]">open_in_new</span>
+          Open in Google Maps
         </a>
       </div>
     )
