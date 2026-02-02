@@ -122,6 +122,14 @@ export function HomePageClient({ initialData }: HomePageClientProps) {
   const [auctionsTodayOnly, setAuctionsTodayOnly] = useState(false)
   const [favoritesOnly, setFavoritesOnly] = useState(false)
 
+  // Price range filters
+  const [judgmentRangeEnabled, setJudgmentRangeEnabled] = useState(false)
+  const [judgmentMin, setJudgmentMin] = useState('')
+  const [judgmentMax, setJudgmentMax] = useState('')
+  const [upsetRangeEnabled, setUpsetRangeEnabled] = useState(false)
+  const [upsetMin, setUpsetMin] = useState('')
+  const [upsetMax, setUpsetMax] = useState('')
+
   // User and tags hooks
   const { userId } = useUser()
   const { tags, refetch: refetchTags, createTag } = useTags()
@@ -161,6 +169,8 @@ export function HomePageClient({ initialData }: HomePageClientProps) {
   const statusHistoryDropdownRef = useRef<HTMLDivElement>(null)
   const sortOrderDropdownRef = useRef<HTMLDivElement>(null)
   const itemsPerPageDropdownRef = useRef<HTMLDivElement>(null)
+  const judgmentRangeDropdownRef = useRef<HTMLDivElement>(null)
+  const upsetRangeDropdownRef = useRef<HTMLDivElement>(null)
   const [isCountyDropdownOpen, setIsCountyDropdownOpen] = useState(false)
   const [isDayDropdownOpen, setIsDayDropdownOpen] = useState(false)
   const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false)
@@ -168,6 +178,8 @@ export function HomePageClient({ initialData }: HomePageClientProps) {
   const [isTagsDropdownOpen, setIsTagsDropdownOpen] = useState(false)
   const [isSortOrderDropdownOpen, setIsSortOrderDropdownOpen] = useState(false)
   const [isItemsPerPageDropdownOpen, setIsItemsPerPageDropdownOpen] = useState(false)
+  const [isJudgmentRangeDropdownOpen, setIsJudgmentRangeDropdownOpen] = useState(false)
+  const [isUpsetRangeDropdownOpen, setIsUpsetRangeDropdownOpen] = useState(false)
 
   // Toggle functions for filters
   const toggleCounty = (county: string) => {
@@ -213,6 +225,12 @@ export function HomePageClient({ initialData }: HomePageClientProps) {
     setHasNotesOnly(false)
     setAuctionsTodayOnly(false)
     setFavoritesOnly(false)
+    setJudgmentRangeEnabled(false)
+    setJudgmentMin('')
+    setJudgmentMax('')
+    setUpsetRangeEnabled(false)
+    setUpsetMin('')
+    setUpsetMax('')
     setCurrentPage(1)
     setItemsPerPage(100)
   }
@@ -422,7 +440,9 @@ export function HomePageClient({ initialData }: HomePageClientProps) {
     selectedStatusHistory.length > 0 ||
     selectedTagId !== null ||
     hasNotesOnly ||
-    favoritesOnly
+    favoritesOnly ||
+    (judgmentRangeEnabled && (judgmentMin || judgmentMax)) ||
+    (upsetRangeEnabled && (upsetMin || upsetMax))
 
   // CSV Export function
   const exportToCSV = async (propertiesToExport: ReturnType<typeof transformPropertyToRow>[]) => {
@@ -893,6 +913,28 @@ export function HomePageClient({ initialData }: HomePageClientProps) {
         }
       }
 
+      // Filter by judgment price range
+      if (judgmentRangeEnabled && (judgmentMin || judgmentMax)) {
+        const judgmentAmount = property.approxJudgment || 0
+        if (judgmentMin && judgmentAmount < parseFloat(judgmentMin)) {
+          return false
+        }
+        if (judgmentMax && judgmentAmount > parseFloat(judgmentMax)) {
+          return false
+        }
+      }
+
+      // Filter by upset price range
+      if (upsetRangeEnabled && (upsetMin || upsetMax)) {
+        const upsetAmount = property.approxUpset || 0
+        if (upsetMin && upsetAmount < parseFloat(upsetMin)) {
+          return false
+        }
+        if (upsetMax && upsetAmount > parseFloat(upsetMax)) {
+          return false
+        }
+      }
+
       // LIVE FEED: Exclude properties with past auction dates
       // Auction History (past auctions) is shown on /auction-history page
       const today = new Date()
@@ -913,7 +955,7 @@ export function HomePageClient({ initialData }: HomePageClientProps) {
     }
 
     return filtered
-  }, [properties, searchQuery, selectedCounties, selectedDaysOfWeek, spreadFilter, selectedStatuses, selectedStatusHistory, selectedTagId, propertyTagsMap, propertyOverridesMap, propertiesWithNotes, hasNotesOnly, auctionsTodayOnly, spreadOrder, favoritesOnly, isFavorited])
+  }, [properties, searchQuery, selectedCounties, selectedDaysOfWeek, spreadFilter, selectedStatuses, selectedStatusHistory, selectedTagId, propertyTagsMap, propertyOverridesMap, propertiesWithNotes, hasNotesOnly, auctionsTodayOnly, spreadOrder, favoritesOnly, isFavorited, judgmentRangeEnabled, judgmentMin, judgmentMax, upsetRangeEnabled, upsetMin, upsetMax])
 
   // Paginated properties for display
   const paginatedProperties = useMemo(() => {
@@ -949,7 +991,7 @@ export function HomePageClient({ initialData }: HomePageClientProps) {
   // Reset to page 1 when filters change
   useEffect(() => {
     setCurrentPage(1)
-  }, [searchQuery, selectedCounties, selectedDaysOfWeek, spreadFilter, selectedStatuses, selectedTagId, hasNotesOnly, favoritesOnly])
+  }, [searchQuery, selectedCounties, selectedDaysOfWeek, spreadFilter, selectedStatuses, selectedTagId, hasNotesOnly, favoritesOnly, judgmentRangeEnabled, judgmentMin, judgmentMax, upsetRangeEnabled, upsetMin, upsetMax])
 
   const handleOpenModal = (property: ReturnType<typeof transformPropertyToRow>) => {
     setSelectedProperty(property)
@@ -1421,6 +1463,158 @@ export function HomePageClient({ initialData }: HomePageClientProps) {
                       <span className="inline">Favorites</span>
                       <span className={`text-yellow-400 text-[10px] ${favoritesOnly ? 'opacity-100' : 'opacity-0'} transition-opacity ml-auto`}>•</span>
                     </button>
+
+                    {/* Judgment Price Range Filter */}
+                    <div className="relative shrink-0 snap-start" ref={judgmentRangeDropdownRef}>
+                      <button
+                        onClick={() => setIsJudgmentRangeDropdownOpen(!isJudgmentRangeDropdownOpen)}
+                        className={`bg-white dark:bg-surface-dark border ${(judgmentRangeEnabled && (judgmentMin || judgmentMax)) ? 'border-primary' : 'border-gray-300 dark:border-border-dark'} hover:border-gray-400 dark:hover:border-gray-500 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white px-2 py-1.5 md:px-3 rounded-lg text-xs md:text-sm font-medium flex items-center gap-0.5 md:gap-1.5 transition-colors whitespace-nowrap min-w-[90px] md:min-w-[100px]`}
+                      >
+                        <span className="material-symbols-outlined text-[16px] md:text-[18px] shrink-0">gavel</span>
+                        <span className="inline">Judgment</span>
+                        <span className={`text-primary text-[10px] md:text-xs ${(judgmentRangeEnabled && (judgmentMin || judgmentMax)) ? 'opacity-100' : 'opacity-0'} transition-opacity`}>•</span>
+                        <span className="material-symbols-outlined text-[14px] md:text-[16px] transition-transform shrink-0 ml-auto">{isJudgmentRangeDropdownOpen ? 'expand_less' : 'expand_more'}</span>
+                      </button>
+
+                      {isJudgmentRangeDropdownOpen && (
+                        <>
+                          <div
+                            className="fixed inset-0 bg-black/60 z-40 md:hidden"
+                            onClick={() => setIsJudgmentRangeDropdownOpen(false)}
+                          />
+                          <div className="fixed bottom-0 left-0 right-0 md:absolute md:top-full md:left-0 md:right-auto md:bottom-auto md:mt-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-border-dark md:rounded-lg rounded-t-2xl shadow-xl z-50 md:w-64 animate-in slide-in-from-bottom md:animate-in fade-in zoom-in duration-200">
+                            <div className="sticky top-0 bg-white dark:bg-surface-dark border-b border-gray-200 dark:border-border-dark p-4 flex items-center justify-between md:hidden">
+                              <h3 className="text-gray-900 dark:text-white font-semibold">Judgment Price Range</h3>
+                              <button
+                                onClick={() => setIsJudgmentRangeDropdownOpen(false)}
+                                className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                              >
+                                <span className="material-symbols-outlined">close</span>
+                              </button>
+                            </div>
+                            <div className="p-4 md:p-3 flex flex-col gap-3">
+                              <div className="flex items-center justify-between">
+                                <span className="text-sm font-medium text-gray-900 dark:text-white">Enable Filter</span>
+                                <button
+                                  onClick={() => setJudgmentRangeEnabled(!judgmentRangeEnabled)}
+                                  className={`w-12 h-6 rounded-full transition-colors ${judgmentRangeEnabled ? 'bg-primary' : 'bg-gray-300 dark:bg-gray-600'}`}
+                                >
+                                  <div className={`w-5 h-5 bg-white rounded-full shadow-md transition-transform ${judgmentRangeEnabled ? 'translate-x-6' : 'translate-x-0.5'}`} />
+                                </button>
+                              </div>
+                              {judgmentRangeEnabled && (
+                                <>
+                                  <div className="flex flex-col gap-1.5">
+                                    <label className="text-xs text-gray-600 dark:text-gray-400">Minimum (optional)</label>
+                                    <input
+                                      type="number"
+                                      value={judgmentMin}
+                                      onChange={(e) => setJudgmentMin(e.target.value)}
+                                      placeholder="No minimum"
+                                      className="w-full px-3 py-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-border-dark rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary"
+                                    />
+                                  </div>
+                                  <div className="flex flex-col gap-1.5">
+                                    <label className="text-xs text-gray-600 dark:text-gray-400">Maximum (optional)</label>
+                                    <input
+                                      type="number"
+                                      value={judgmentMax}
+                                      onChange={(e) => setJudgmentMax(e.target.value)}
+                                      placeholder="No maximum"
+                                      className="w-full px-3 py-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-border-dark rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary"
+                                    />
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                            <div className="sticky bottom-0 bg-white dark:bg-surface-dark border-t border-gray-200 dark:border-border-dark p-4 md:hidden">
+                              <button
+                                onClick={() => setIsJudgmentRangeDropdownOpen(false)}
+                                className="w-full py-3 bg-primary text-white rounded-lg font-medium"
+                              >
+                                Done
+                              </button>
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Upset Price Range Filter */}
+                    <div className="relative shrink-0 snap-start" ref={upsetRangeDropdownRef}>
+                      <button
+                        onClick={() => setIsUpsetRangeDropdownOpen(!isUpsetRangeDropdownOpen)}
+                        className={`bg-white dark:bg-surface-dark border ${(upsetRangeEnabled && (upsetMin || upsetMax)) ? 'border-primary' : 'border-gray-300 dark:border-border-dark'} hover:border-gray-400 dark:hover:border-gray-500 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white px-2 py-1.5 md:px-3 rounded-lg text-xs md:text-sm font-medium flex items-center gap-0.5 md:gap-1.5 transition-colors whitespace-nowrap min-w-[90px] md:min-w-[100px]`}
+                      >
+                        <span className="material-symbols-outlined text-[16px] md:text-[18px] shrink-0">payments</span>
+                        <span className="inline">Upset</span>
+                        <span className={`text-primary text-[10px] md:text-xs ${(upsetRangeEnabled && (upsetMin || upsetMax)) ? 'opacity-100' : 'opacity-0'} transition-opacity`}>•</span>
+                        <span className="material-symbols-outlined text-[14px] md:text-[16px] transition-transform shrink-0 ml-auto">{isUpsetRangeDropdownOpen ? 'expand_less' : 'expand_more'}</span>
+                      </button>
+
+                      {isUpsetRangeDropdownOpen && (
+                        <>
+                          <div
+                            className="fixed inset-0 bg-black/60 z-40 md:hidden"
+                            onClick={() => setIsUpsetRangeDropdownOpen(false)}
+                          />
+                          <div className="fixed bottom-0 left-0 right-0 md:absolute md:top-full md:left-0 md:right-auto md:bottom-auto md:mt-2 bg-white dark:bg-surface-dark border border-gray-200 dark:border-border-dark md:rounded-lg rounded-t-2xl shadow-xl z-50 md:w-64 animate-in slide-in-from-bottom md:animate-in fade-in zoom-in duration-200">
+                            <div className="sticky top-0 bg-white dark:bg-surface-dark border-b border-gray-200 dark:border-border-dark p-4 flex items-center justify-between md:hidden">
+                              <h3 className="text-gray-900 dark:text-white font-semibold">Upset Price Range</h3>
+                              <button
+                                onClick={() => setIsUpsetRangeDropdownOpen(false)}
+                                className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                              >
+                                <span className="material-symbols-outlined">close</span>
+                              </button>
+                            </div>
+                            <div className="p-4 md:p-3 flex flex-col gap-3">
+                              <div className="flex items-center justify-between">
+                                <span className="text-sm font-medium text-gray-900 dark:text-white">Enable Filter</span>
+                                <button
+                                  onClick={() => setUpsetRangeEnabled(!upsetRangeEnabled)}
+                                  className={`w-12 h-6 rounded-full transition-colors ${upsetRangeEnabled ? 'bg-primary' : 'bg-gray-300 dark:bg-gray-600'}`}
+                                >
+                                  <div className={`w-5 h-5 bg-white rounded-full shadow-md transition-transform ${upsetRangeEnabled ? 'translate-x-6' : 'translate-x-0.5'}`} />
+                                </button>
+                              </div>
+                              {upsetRangeEnabled && (
+                                <>
+                                  <div className="flex flex-col gap-1.5">
+                                    <label className="text-xs text-gray-600 dark:text-gray-400">Minimum (optional)</label>
+                                    <input
+                                      type="number"
+                                      value={upsetMin}
+                                      onChange={(e) => setUpsetMin(e.target.value)}
+                                      placeholder="No minimum"
+                                      className="w-full px-3 py-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-border-dark rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary"
+                                    />
+                                  </div>
+                                  <div className="flex flex-col gap-1.5">
+                                    <label className="text-xs text-gray-600 dark:text-gray-400">Maximum (optional)</label>
+                                    <input
+                                      type="number"
+                                      value={upsetMax}
+                                      onChange={(e) => setUpsetMax(e.target.value)}
+                                      placeholder="No maximum"
+                                      className="w-full px-3 py-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-border-dark rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary"
+                                    />
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                            <div className="sticky bottom-0 bg-white dark:bg-surface-dark border-t border-gray-200 dark:border-border-dark p-4 md:hidden">
+                              <button
+                                onClick={() => setIsUpsetRangeDropdownOpen(false)}
+                                className="w-full py-3 bg-primary text-white rounded-lg font-medium"
+                              >
+                                Done
+                              </button>
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
 
                     {/* Sort Order Filter - Mobile only */}
                     <div className="relative shrink-0 snap-start md:hidden" ref={sortOrderDropdownRef}>
