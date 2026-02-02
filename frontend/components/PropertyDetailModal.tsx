@@ -7,6 +7,8 @@ import { PropertyNotes } from '@/components/PropertyNotes'
 import { RefinedReport } from '@/components/RefinedReport'
 import { analyzePropertyStream, exportAnalysisPdf, type AnalysisData } from '@/lib/AnalysisService'
 import { getUserNote, getPropertyTags, refineDescription, type UserTag, type UserNote } from '@/lib/api/client'
+import Map, { Marker } from 'react-map-gl/mapbox'
+import 'mapbox-gl/dist/mapbox-gl.css'
 
 // ============================================================================
 // SKIP TRACE DISPLAY COMPONENT
@@ -937,6 +939,99 @@ interface PropertyDetailModalProps {
   isZoningAnalysisInProgress?: boolean
 }
 
+// ============================================================================
+// PROPERTY MAP COMPONENT (Mapbox)
+// ============================================================================
+
+interface PropertyMapProps {
+  address: string
+  city: string
+  state: string
+  zip: string
+}
+
+function PropertyMap({ address, city, state, zip }: PropertyMapProps) {
+  const [viewState, setViewState] = useState({
+    longitude: -74.5, // Default NJ longitude
+    latitude: 40.0,   // Default NJ latitude
+    zoom: 13
+  })
+  const [coordinates, setCoordinates] = useState<{ lng: number; lat: number } | null>(null)
+
+  // Geocode the address to get coordinates
+  useEffect(() => {
+    const geocodeAddress = async () => {
+      try {
+        const fullAddress = `${address}, ${city}, ${state} ${zip}`
+        // Using OpenStreetMap Nominatim API (free, no API key needed)
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fullAddress)}&limit=1`
+        )
+        const data = await response.json()
+
+        if (data && data.length > 0) {
+          const { lon, lat } = data[0]
+          setViewState({
+            longitude: parseFloat(lon),
+            latitude: parseFloat(lat),
+            zoom: 15
+          })
+          setCoordinates({ lng: parseFloat(lon), lat: parseFloat(lat) })
+        }
+      } catch (error) {
+        console.error('Geocoding error:', error)
+        // Keep default NJ coordinates if geocoding fails
+      }
+    }
+
+    geocodeAddress()
+  }, [address, city, state, zip])
+
+  const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || ''
+
+  // If no Mapbox token, show a fallback message
+  if (!mapboxToken || mapboxToken === 'your_mapbox_token_here') {
+    return (
+      <div className="w-full h-64 sm:h-80 bg-gray-100 dark:bg-gray-800 flex flex-col items-center justify-center p-6">
+        <span className="material-symbols-outlined text-4xl text-gray-400 dark:text-gray-600 mb-3">map</span>
+        <p className="text-gray-600 dark:text-gray-400 text-sm text-center mb-2">Mapbox token required</p>
+        <a
+          href="https://account.mapbox.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-primary hover:text-emerald-600 dark:hover:text-emerald-400 font-medium"
+        >
+          Get free access token →
+        </a>
+      </div>
+    )
+  }
+
+  return (
+    <div className="relative w-full h-64 sm:h-80">
+      <Map
+        {...viewState}
+        onMove={evt => setViewState(evt.viewState)}
+        mapStyle="mapbox://styles/mapbox/streets-v12"
+        style={{ width: '100%', height: '100%' }}
+        mapboxAccessToken={mapboxToken}
+      >
+        {coordinates && (
+          <Marker
+            longitude={coordinates.lng}
+            latitude={coordinates.lat}
+            anchor="bottom"
+          >
+            <div className="bg-primary text-white p-2 rounded-full shadow-lg border-2 border-white">
+              <span className="material-symbols-outlined text-[20px]">home</span>
+            </div>
+          </Marker>
+        )}
+      </Map>
+    </div>
+  )
+}
+
 export function PropertyDetailModal({ property, isOpen, onClose, onSkipTrace, isSkipTraceInProgress, onZoningAnalysis, isZoningAnalysisInProgress }: PropertyDetailModalProps) {
   const [shareSheetOpen, setShareSheetOpen] = useState(false)
   const [notes, setNotes] = useState<UserNote | null>(null)
@@ -1199,19 +1294,12 @@ export function PropertyDetailModal({ property, isOpen, onClose, onSkipTrace, is
                   <span className="hidden sm:inline">Open in Google Maps</span>
                 </a>
               </div>
-              <div className="relative w-full h-64 sm:h-80">
-                <iframe
-                  width="100%"
-                  height="100%"
-                  frameBorder="0"
-                  style={{ border: 0 }}
-                  src={`https://maps.google.com/maps?q=${encodeURIComponent(`${property.address}, ${property.city}, ${property.state} ${property.zip}`)}&output=embed`}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  title="Property Location Map"
-                />
-              </div>
+              <PropertyMap
+                address={property.address}
+                city={property.city}
+                state={property.state}
+                zip={property.zip}
+              />
             </div>
 
             {/* Financial Summary */}
