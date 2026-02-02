@@ -88,7 +88,7 @@ export function HomePageClient({ initialData }: HomePageClientProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   // Sort orders for columns: 'desc', 'asc', or null (no sort)
-  const [auctionDateOrder, setAuctionDateOrder] = useState<'desc' | 'asc' | null>('desc')
+  const [auctionDateOrder, setAuctionDateOrder] = useState<'desc' | 'asc' | null>('asc')
   const [upsetOrder, setUpsetOrder] = useState<'desc' | 'asc' | null>(null)
   const [judgmentOrder, setJudgmentOrder] = useState<'desc' | 'asc' | null>(null)
   const [zestimateOrder, setZestimateOrder] = useState<'desc' | 'asc' | null>(null)
