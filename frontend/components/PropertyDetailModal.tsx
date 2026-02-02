@@ -7,8 +7,6 @@ import { PropertyNotes } from '@/components/PropertyNotes'
 import { RefinedReport } from '@/components/RefinedReport'
 import { analyzePropertyStream, exportAnalysisPdf, type AnalysisData } from '@/lib/AnalysisService'
 import { getUserNote, getPropertyTags, refineDescription, type UserTag, type UserNote } from '@/lib/api/client'
-import Map, { Marker } from 'react-map-gl/mapbox'
-import 'mapbox-gl/dist/mapbox-gl.css'
 
 // ============================================================================
 // SKIP TRACE DISPLAY COMPONENT
@@ -939,112 +937,6 @@ interface PropertyDetailModalProps {
   isZoningAnalysisInProgress?: boolean
 }
 
-// ============================================================================
-// PROPERTY MAP COMPONENT (Mapbox)
-// ============================================================================
-
-interface PropertyMapProps {
-  address: string
-  city: string
-  state: string
-  zip: string
-}
-
-function PropertyMap({ address, city, state, zip }: PropertyMapProps) {
-  const [viewState, setViewState] = useState({
-    longitude: -74.5, // Default NJ longitude
-    latitude: 40.0,   // Default NJ latitude
-    zoom: 13
-  })
-  const [coordinates, setCoordinates] = useState<{ lng: number; lat: number } | null>(null)
-
-  // Geocode the address to get coordinates
-  useEffect(() => {
-    const geocodeAddress = async () => {
-      try {
-        const fullAddress = `${address}, ${city}, ${state} ${zip}`
-        // Using OpenStreetMap Nominatim API (free, no API key needed)
-        const response = await fetch(
-          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fullAddress)}&limit=1`
-        )
-        const data = await response.json()
-
-        if (data && data.length > 0) {
-          const { lon, lat } = data[0]
-          setViewState({
-            longitude: parseFloat(lon),
-            latitude: parseFloat(lat),
-            zoom: 15
-          })
-          setCoordinates({ lng: parseFloat(lon), lat: parseFloat(lat) })
-        }
-      } catch (error) {
-        console.error('Geocoding error:', error)
-        // Keep default NJ coordinates if geocoding fails
-      }
-    }
-
-    geocodeAddress()
-  }, [address, city, state, zip])
-
-  const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || ''
-  const hasValidToken = mapboxToken && mapboxToken !== 'your_mapbox_token_here'
-
-  const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${address}, ${city}, ${state} ${zip}`)}`
-
-  // If no Mapbox token, show Google Maps link as fallback
-  if (!hasValidToken) {
-    return (
-      <div className="w-full h-64 sm:h-80 bg-gray-100 dark:bg-gray-800 flex flex-col items-center justify-center p-6">
-        <span className="material-symbols-outlined text-4xl text-gray-400 dark:text-gray-600 mb-3">map</span>
-        <p className="text-gray-600 dark:text-gray-400 text-sm text-center mb-2">Interactive map unavailable</p>
-        <a
-          href={googleMapsUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-sm text-primary hover:text-emerald-600 dark:hover:text-emerald-400 font-medium flex items-center gap-1"
-        >
-          <span className="material-symbols-outlined text-[16px]">open_in_new</span>
-          Open in Google Maps
-        </a>
-      </div>
-    )
-  }
-
-  return (
-    <div className="relative w-full h-64 sm:h-80">
-      <Map
-        {...viewState}
-        onMove={evt => setViewState(evt.viewState)}
-        mapStyle="mapbox://styles/mapbox/streets-v12"
-        style={{ width: '100%', height: '100%' }}
-        mapboxAccessToken={mapboxToken}
-      >
-        {coordinates && (
-          <Marker
-            longitude={coordinates.lng}
-            latitude={coordinates.lat}
-            anchor="bottom"
-          >
-            <div className="bg-primary text-white p-2 rounded-full shadow-lg border-2 border-white">
-              <span className="material-symbols-outlined text-[20px]">home</span>
-            </div>
-          </Marker>
-        )}
-      </Map>
-      <a
-        href={googleMapsUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="absolute top-3 right-3 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-3 py-2 rounded-md shadow-lg text-sm font-medium flex items-center gap-1 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-      >
-        <span className="material-symbols-outlined text-[16px]">open_in_new</span>
-        <span className="hidden sm:inline">Google Maps</span>
-      </a>
-    </div>
-  )
-}
-
 export function PropertyDetailModal({ property, isOpen, onClose, onSkipTrace, isSkipTraceInProgress, onZoningAnalysis, isZoningAnalysisInProgress }: PropertyDetailModalProps) {
   const [shareSheetOpen, setShareSheetOpen] = useState(false)
   const [notes, setNotes] = useState<UserNote | null>(null)
@@ -1250,6 +1142,15 @@ export function PropertyDetailModal({ property, isOpen, onClose, onSkipTrace, is
                 )}
               </button>
             )}
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${property.address}, ${property.city}, ${property.state} ${property.zip}`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-300 dark:hover:bg-white/5 rounded-lg transition-colors shrink-0"
+              title="Open in Google Maps"
+            >
+              <span className="material-symbols-outlined">map</span>
+            </a>
             <button
               onClick={handleShare}
               className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-300 dark:hover:bg-white/5 rounded-lg transition-colors shrink-0"
@@ -1288,22 +1189,6 @@ export function PropertyDetailModal({ property, isOpen, onClose, onSkipTrace, is
                 <p className="text-gray-600 dark:text-gray-500 text-xs mb-1">Year Built</p>
                 <p className="text-gray-900 dark:text-white text-base sm:text-lg font-semibold">{property.yearBuilt ?? '-'}</p>
               </div>
-            </div>
-
-            {/* Google Map */}
-            <div className="bg-white dark:bg-surface-dark border border-gray-300 dark:border-border-dark rounded-lg overflow-hidden">
-              <div className="p-3 sm:p-4 border-b border-gray-300 dark:border-border-dark">
-                <h3 className="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
-                  <span className="material-symbols-outlined text-primary">map</span>
-                  Location Map
-                </h3>
-              </div>
-              <PropertyMap
-                address={property.address}
-                city={property.city}
-                state={property.state}
-                zip={property.zip}
-              />
             </div>
 
             {/* Financial Summary */}
