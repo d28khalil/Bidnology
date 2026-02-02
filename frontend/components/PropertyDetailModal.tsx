@@ -1032,6 +1032,15 @@ function PropertyMap({ address, city, state, zip }: PropertyMapProps) {
           </Marker>
         )}
       </Map>
+      <a
+        href={googleMapsUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="absolute top-3 right-3 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-3 py-2 rounded-md shadow-lg text-sm font-medium flex items-center gap-1 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+      >
+        <span className="material-symbols-outlined text-[16px]">open_in_new</span>
+        <span className="hidden sm:inline">Google Maps</span>
+      </a>
     </div>
   )
 }
@@ -1283,20 +1292,11 @@ export function PropertyDetailModal({ property, isOpen, onClose, onSkipTrace, is
 
             {/* Google Map */}
             <div className="bg-white dark:bg-surface-dark border border-gray-300 dark:border-border-dark rounded-lg overflow-hidden">
-              <div className="flex items-center justify-between p-3 sm:p-4 border-b border-gray-300 dark:border-border-dark">
+              <div className="p-3 sm:p-4 border-b border-gray-300 dark:border-border-dark">
                 <h3 className="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
                   <span className="material-symbols-outlined text-primary">map</span>
                   Location Map
                 </h3>
-                <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${property.address}, ${property.city}, ${property.state} ${property.zip}`)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-primary hover:text-emerald-600 dark:hover:text-emerald-400 font-medium flex items-center gap-1 transition-colors"
-                >
-                  <span className="material-symbols-outlined text-[16px]">open_in_new</span>
-                  <span className="hidden sm:inline">Open in Google Maps</span>
-                </a>
               </div>
               <PropertyMap
                 address={property.address}
